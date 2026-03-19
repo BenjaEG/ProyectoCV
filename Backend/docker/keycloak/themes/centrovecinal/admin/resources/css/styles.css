@@ -1,0 +1,619 @@
+:root {
+  --color-background: #0f172a;
+  --color-foreground: #f8fafc;
+  --color-card: #111827;
+  --color-card-foreground: #f8fafc;
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #1e293b;
+  --color-secondary-foreground: #f8fafc;
+  --color-muted-foreground: #94a3b8;
+  --color-border: #334155;
+  --color-input: #334155;
+  --color-ring: #3b82f6;
+  --radius: 0.5rem;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --pf-global--BackgroundColor--100: #0f172a;
+  --pf-global--BackgroundColor--150: #111827;
+  --pf-global--BackgroundColor--200: #1e293b;
+  --pf-global--Color--100: #f8fafc;
+  --pf-global--Color--200: #e2e8f0;
+  --pf-global--Color--light-100: #f8fafc;
+  --pf-global--Color--dark-100: #0f172a;
+  --pf-global--BorderColor--100: #334155;
+  --pf-global--primary-color--100: #3b82f6;
+  --pf-global--primary-color--200: #2563eb;
+}
+
+html,
+body {
+  background: var(--color-background) !important;
+  color: var(--color-foreground) !important;
+  font-family: var(--font-sans);
+}
+
+body {
+  min-height: 100vh;
+}
+
+#app,
+.pf-c-page,
+.pf-c-page__drawer,
+.pf-c-page__main,
+.pf-c-page__main-body,
+.pf-c-page__main-section,
+.pf-c-page__sidebar,
+.pf-c-backdrop,
+.pf-c-app-launcher,
+.pf-c-content,
+.pf-l-page,
+.pf-l-page__main,
+.pf-l-page__main-section,
+.pf-l-page__main-body,
+.pf-v6-c-page,
+.pf-v6-c-page__drawer,
+.pf-v6-c-page__main-container,
+.pf-v6-c-page,
+.pf-v6-c-page__main,
+.pf-v6-c-page__main-section,
+.pf-v6-c-page__main-breadcrumb,
+.pf-v6-c-page__main-group,
+.pf-v6-c-page__main-subnav,
+.pf-v6-c-page__main-body,
+.pf-c-page__main-breadcrumb,
+.pf-c-page__main-tabs,
+.pf-c-page__main-section,
+.pf-c-page__main-group,
+.pf-c-page__main-subnav,
+.pf-c-backdrop__open,
+.pf-v6-l-bullseye,
+.pf-v6-l-flex,
+.pf-v6-l-gallery,
+.pf-v6-l-grid,
+.pf-v6-l-stack,
+[class*='pf-v6-l-'],
+[class*='pf-v6-c-page__main'] {
+  background: var(--color-background) !important;
+  color: var(--color-foreground) !important;
+}
+
+.pf-c-page__main,
+.pf-c-page__main-section,
+.pf-c-page__main-body,
+.pf-c-page__main-breadcrumb,
+.pf-c-page__main-tabs,
+.pf-l-page__main,
+.pf-l-page__main-section,
+.pf-l-page__main-body,
+.pf-c-content,
+.pf-c-content * {
+  background-color: transparent;
+}
+
+.pf-v6-c-masthead,
+.pf-v6-c-page__header,
+.pf-c-masthead,
+.pf-c-page__header,
+.pf-c-page__header-brand,
+.pf-c-page__header-tools {
+  background: rgba(15, 23, 42, 0.96) !important;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pf-c-breadcrumb,
+.pf-c-breadcrumb__list,
+.pf-c-breadcrumb__item,
+.pf-c-breadcrumb__link,
+.pf-c-breadcrumb__heading,
+.pf-v6-c-breadcrumb,
+.pf-v6-c-breadcrumb__list,
+.pf-v6-c-breadcrumb__item,
+.pf-v6-c-breadcrumb__link,
+.pf-v6-c-breadcrumb__heading {
+  background: transparent !important;
+  color: var(--color-muted-foreground) !important;
+}
+
+.pf-c-masthead,
+.pf-c-page__header,
+.pf-c-page__header-tools,
+.pf-c-page__header-brand {
+  color: var(--color-foreground) !important;
+}
+
+.pf-v6-c-masthead__main,
+.pf-v6-c-masthead__brand,
+.pf-v6-c-masthead__content,
+.pf-c-masthead__main,
+.pf-c-masthead__brand,
+.pf-c-page__header-brand {
+  background: transparent !important;
+}
+
+.pf-v6-c-masthead__brand img,
+.pf-v6-c-masthead__brand svg,
+.pf-v6-c-brand img,
+.pf-v6-c-brand svg,
+.pf-c-masthead__brand img,
+.pf-c-masthead__brand svg,
+.pf-c-brand img,
+.pf-c-brand svg,
+.navbar-pf .navbar-brand img {
+  display: none !important;
+}
+
+.pf-v6-c-masthead__brand a,
+.pf-v6-c-brand,
+.pf-v6-c-masthead__brand,
+.pf-c-masthead__brand a,
+.pf-c-brand,
+.pf-c-masthead__brand,
+.navbar-pf .navbar-brand {
+  display: flex !important;
+  align-items: center;
+  min-height: 40px;
+  text-decoration: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+}
+
+.pf-v6-c-masthead__brand a::after,
+.pf-v6-c-brand::after,
+.pf-c-masthead__brand a::after,
+.pf-c-brand::after,
+.navbar-pf .navbar-brand::after {
+  content: 'Centro Vecinal - Admin';
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.pf-c-masthead__brand::after,
+.pf-v6-c-masthead__brand::after {
+  content: 'Centro Vecinal - Admin';
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.pf-v6-c-nav,
+.pf-v6-c-page__sidebar,
+.pf-c-nav,
+.pf-c-page__sidebar,
+.pf-l-page__sidebar,
+.pf-c-nav__list,
+.pf-c-nav__subnav {
+  background: #0b1324 !important;
+  border-right: 1px solid var(--color-border);
+}
+
+.pf-v6-c-card,
+.pf-v6-c-menu,
+.pf-v6-c-dropdown__menu,
+.pf-v6-c-popover__content,
+.pf-v6-c-modal-box,
+.pf-v6-c-description-list,
+.pf-v6-c-table,
+.pf-v6-c-data-list,
+.pf-v6-c-panel,
+.pf-v6-c-content,
+.pf-v6-c-page__main-section-card,
+.pf-v6-c-accordion,
+.pf-v6-c-expandable-section,
+.pf-v6-c-toolbar,
+.pf-v6-c-pagination,
+.pf-v6-c-empty-state,
+.pf-v6-c-drawer__panel,
+.pf-v6-c-label-group {
+  background: var(--color-card) !important;
+  color: var(--color-card-foreground) !important;
+  border-color: var(--color-border) !important;
+  border-radius: var(--radius) !important;
+}
+
+.pf-c-card,
+.pf-c-menu,
+.pf-c-dropdown__menu,
+.pf-c-select__menu,
+.pf-c-options-menu__menu,
+.pf-c-dropdown__menu,
+.pf-c-context-selector__menu,
+.pf-c-popover__content,
+.pf-c-modal-box,
+.pf-c-description-list,
+.pf-c-table,
+.pf-c-data-list,
+.pf-c-panel,
+.pf-c-toolbar,
+.pf-c-pagination,
+.pf-c-expandable-section,
+.pf-c-accordion,
+.pf-c-empty-state,
+.pf-c-drawer__panel,
+.pf-c-label-group {
+  background: var(--color-card) !important;
+  color: var(--color-card-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+.pf-v6-c-tabs,
+.pf-v6-c-tabs__list,
+.pf-v6-c-tabs__item,
+.pf-v6-c-tabs__link,
+.pf-v6-c-page__main-tabs,
+.pf-v6-c-page__main-tabs-list,
+.pf-c-tabs,
+.pf-c-tabs__list,
+.pf-c-tabs__item,
+.pf-c-tabs__link,
+.pf-c-page__main-tabs,
+.pf-c-page__main-tabs-list {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+.pf-v6-c-tabs__link,
+.pf-c-tabs__link {
+  box-shadow: inset 0 -1px 0 var(--color-border) !important;
+}
+
+.pf-v6-c-tabs__link[aria-selected='true'],
+.pf-v6-c-tabs__item.pf-m-current .pf-v6-c-tabs__link,
+.pf-c-tabs__link[aria-selected='true'],
+.pf-c-tabs__item.pf-m-current .pf-c-tabs__link {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  box-shadow: inset 0 3px 0 var(--color-primary) !important;
+}
+
+.pf-v6-c-select__menu,
+.pf-v6-c-menu,
+.pf-v6-c-menu__content,
+.pf-v6-c-menu__list,
+.pf-v6-c-menu__item,
+.pf-v6-c-menu__item-main,
+.pf-v6-c-menu__item-text,
+.pf-v6-c-options-menu__menu,
+.pf-c-select__menu,
+.pf-c-menu,
+.pf-c-menu__content,
+.pf-c-menu__list,
+.pf-c-menu__item,
+.pf-c-menu__item-main,
+.pf-c-menu__item-text,
+.pf-c-options-menu__menu {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+.pf-c-dropdown__menu,
+.pf-c-dropdown__menu-item,
+.pf-c-context-selector__menu,
+.pf-c-context-selector__menu-list,
+.pf-c-context-selector__menu-list-item,
+.pf-c-context-selector__menu-list-item a,
+.pf-v6-c-dropdown__menu,
+.pf-v6-c-dropdown__menu-item,
+.pf-v6-c-context-selector__menu,
+.pf-v6-c-context-selector__menu-list,
+.pf-v6-c-context-selector__menu-list-item,
+.pf-v6-c-context-selector__menu-list-item a {
+  background: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+.pf-v6-c-menu__item:hover,
+.pf-v6-c-menu__item:focus,
+.pf-v6-c-menu__item[aria-current='true'],
+.pf-v6-c-dropdown__menu-item:hover,
+.pf-v6-c-context-selector__menu-list-item:hover,
+.pf-c-menu__item:hover,
+.pf-c-menu__item:focus,
+.pf-c-menu__item[aria-current='true'],
+.pf-c-dropdown__menu-item:hover,
+.pf-c-context-selector__menu-list-item:hover {
+  background: rgba(59, 130, 246, 0.12) !important;
+  color: var(--color-foreground) !important;
+}
+
+.pf-c-table thead,
+.pf-c-table tbody,
+.pf-c-table tr,
+.pf-c-table th,
+.pf-c-table td,
+.pf-c-table__thead,
+.pf-c-table__tbody,
+.pf-c-table__tr,
+.pf-c-table__th,
+.pf-c-table__td,
+.pf-c-data-list__item,
+.pf-c-data-list__item-row,
+.pf-c-data-list__cell {
+  background: var(--color-card) !important;
+  color: var(--color-muted-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+.pf-c-table th,
+.pf-c-table__th {
+  color: var(--color-foreground) !important;
+}
+
+.pf-c-table tr:hover,
+.pf-c-table tbody tr:hover,
+.pf-c-table__tbody > tr:hover,
+.pf-c-table tr:hover > *,
+.pf-c-table tbody tr:hover > *,
+.pf-c-table__tbody > tr:hover > *,
+.pf-c-table__tbody > tr:hover > * > *,
+.pf-c-table__tbody > tr:hover > td,
+.pf-c-table__tbody > tr:hover > th,
+.pf-c-data-list__item:hover,
+.pf-c-data-list__item:hover > *,
+.pf-c-data-list__item-row:hover,
+.pf-c-data-list__item-row:hover *,
+.pf-c-data-list__item-row:hover > *,
+.pf-v6-c-data-list__item:hover,
+.pf-v6-c-data-list__item:hover > *,
+.pf-v6-c-data-list__item-row:hover,
+.pf-v6-c-data-list__item-row:hover *,
+.pf-v6-c-data-list__item-row:hover > *,
+.pf-v6-c-table__tbody > tr:hover,
+.pf-v6-c-table__tbody > tr:hover > *,
+.pf-v6-c-table__tbody > tr:hover > td,
+.pf-v6-c-table__tbody > tr:hover > th,
+.pf-v6-c-table tr:hover,
+.pf-v6-c-table tbody tr:hover,
+.pf-v6-c-table tr:hover > *,
+.pf-v6-c-table tbody tr:hover > *,
+.pf-v6-c-description-list__group:hover,
+.pf-c-description-list__group:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.pf-v6-c-card__title,
+.pf-v6-c-title,
+.pf-v6-c-form__label,
+.pf-v6-c-nav__link,
+.pf-v6-c-menu__item-text,
+.pf-v6-c-description-list__term,
+.pf-v6-c-description-list__description,
+.pf-v6-c-content h1,
+.pf-v6-c-content h2,
+.pf-v6-c-content h3,
+.pf-v6-c-content h4,
+.pf-v6-c-content p,
+.pf-v6-c-helper-text,
+.pf-v6-c-form__group-label,
+.pf-v6-c-empty-state__title-text {
+  color: var(--color-foreground) !important;
+}
+
+.pf-c-card__title,
+.pf-c-title,
+.pf-c-form__label,
+.pf-c-nav__link,
+.pf-c-menu__item-text,
+.pf-c-description-list__term,
+.pf-c-description-list__description,
+.pf-c-content h1,
+.pf-c-content h2,
+.pf-c-content h3,
+.pf-c-content h4,
+.pf-c-content p,
+.pf-c-page__main-section-title,
+.pf-c-empty-state__title-text {
+  color: var(--color-foreground) !important;
+}
+
+.pf-v6-c-content,
+.pf-v6-c-form__helper-text,
+.pf-v6-c-nav__link-description,
+.pf-v6-c-description-list__text,
+.pf-v6-c-helper-text__item-text,
+.pf-v6-c-table__td,
+.pf-v6-c-table__th,
+.pf-v6-c-data-list__cell,
+.pf-v6-c-content small,
+.pf-v6-c-content span,
+.pf-v6-c-label,
+.pf-v6-c-form__helper-text-text,
+.pf-v6-c-empty-state__body {
+  color: var(--color-muted-foreground) !important;
+}
+
+.pf-c-content,
+.pf-c-form__helper-text,
+.pf-c-nav__link-description,
+.pf-c-description-list__text,
+.pf-c-helper-text__item-text,
+.pf-c-table__td,
+.pf-c-table__th,
+.pf-c-data-list__cell,
+.pf-c-content small,
+.pf-c-content span,
+.pf-c-label,
+.pf-c-form__helper-text-text,
+.pf-c-empty-state__body {
+  color: var(--color-muted-foreground) !important;
+}
+
+.pf-v6-c-text-input-group,
+.pf-v6-c-form-control,
+.pf-v6-c-text-input-group__text-input,
+.pf-v6-c-select__toggle,
+.pf-v6-c-menu-toggle,
+.pf-v6-c-input-group,
+input,
+textarea,
+select {
+  background: var(--color-secondary) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+  border-radius: calc(var(--radius) - 2px) !important;
+}
+
+.pf-c-form-control,
+.pf-c-text-input-group__text-input,
+.pf-c-select__toggle,
+.pf-c-menu-toggle,
+.pf-c-input-group,
+.pf-c-form-control[readonly],
+.pf-c-select__toggle-text,
+.pf-c-menu-toggle__text,
+.pf-c-select__toggle-wrapper,
+.pf-c-context-selector__toggle,
+.pf-c-context-selector__toggle-text {
+  background: var(--color-secondary) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-muted-foreground) !important;
+}
+
+.pf-v6-c-form-control:focus,
+.pf-v6-c-text-input-group__text-input:focus,
+.pf-v6-c-menu-toggle:focus,
+.pf-v6-c-select__toggle:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+  border-color: var(--color-ring) !important;
+}
+
+.pf-c-form-control:focus,
+.pf-c-text-input-group__text-input:focus,
+.pf-c-menu-toggle:focus,
+.pf-c-select__toggle:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+  border-color: var(--color-ring) !important;
+}
+
+.pf-v6-c-button.pf-m-primary,
+button.pf-m-primary {
+  background: var(--color-primary) !important;
+  color: var(--color-primary-foreground) !important;
+  border-color: var(--color-primary) !important;
+  border-radius: calc(var(--radius) - 2px) !important;
+}
+
+.pf-v6-c-button.pf-m-primary:hover,
+button.pf-m-primary:hover {
+  background: #2563eb !important;
+}
+
+.pf-c-button.pf-m-primary {
+  background: var(--color-primary) !important;
+  color: var(--color-primary-foreground) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.pf-c-button.pf-m-primary:hover {
+  background: #2563eb !important;
+}
+
+.pf-c-button.pf-m-secondary,
+.pf-c-button.pf-m-control,
+.pf-c-button.pf-m-plain,
+.pf-v6-c-button.pf-m-secondary,
+.pf-v6-c-button.pf-m-control,
+.pf-v6-c-button.pf-m-plain {
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+.pf-v6-c-button.pf-m-secondary,
+.pf-v6-c-button.pf-m-link,
+.pf-v6-c-button.pf-m-tertiary,
+.pf-c-button.pf-m-secondary,
+.pf-c-button.pf-m-link,
+.pf-c-button.pf-m-tertiary {
+  color: var(--color-foreground) !important;
+}
+
+.pf-v6-c-nav__link.pf-m-current,
+.pf-v6-c-nav__link:hover,
+.pf-v6-c-menu__item:hover,
+.pf-c-nav__link.pf-m-current,
+.pf-c-nav__link:hover,
+.pf-c-menu__item:hover {
+  background: rgba(59, 130, 246, 0.12) !important;
+}
+
+.pf-v6-c-checkbox__label,
+.pf-v6-c-check__label,
+.pf-v6-c-form__label-text,
+.pf-v6-c-table__text,
+.pf-v6-c-switch__label,
+.pf-v6-c-switch__label-text,
+.pf-v6-c-switch__toggle,
+.pf-v6-c-switch__toggle-icon,
+.pf-c-checkbox__label,
+.pf-c-check__label,
+.pf-c-form__label-text,
+.pf-c-table__text,
+.pf-c-switch__label,
+.pf-c-switch__label-text,
+.pf-c-switch__toggle,
+.pf-c-switch__toggle-icon,
+.pf-c-select__menu-item,
+.pf-v6-c-select__menu-item,
+.pf-c-dropdown__menu-item,
+.pf-v6-c-dropdown__menu-item,
+.pf-c-context-selector__toggle-text,
+.pf-v6-c-context-selector__toggle-text {
+  color: var(--color-foreground) !important;
+}
+
+.pf-c-text-input-group__text-input::placeholder,
+.pf-c-form-control::placeholder,
+.pf-c-context-selector__toggle-text::placeholder,
+.pf-v6-c-text-input-group__text-input::placeholder,
+.pf-v6-c-form-control::placeholder {
+  color: var(--color-muted-foreground) !important;
+}
+
+a {
+  color: var(--color-primary) !important;
+}
+
+.pf-v6-c-divider,
+.pf-v6-c-table,
+.pf-v6-c-table__tbody > tr,
+.pf-v6-c-description-list__group,
+.pf-v6-c-card,
+.pf-v6-c-panel,
+.pf-v6-c-accordion__item,
+.pf-v6-c-toolbar,
+.pf-v6-c-pagination,
+.pf-c-divider,
+.pf-c-table,
+.pf-c-table__tbody > tr,
+.pf-c-description-list__group,
+.pf-c-card,
+.pf-c-panel,
+.pf-c-accordion__item,
+.pf-c-toolbar,
+.pf-c-pagination {
+  border-color: var(--color-border) !important;
+}
+
+.pf-v6-c-page__main-section,
+.pf-v6-c-page__main-body {
+  padding-bottom: 2rem;
+}

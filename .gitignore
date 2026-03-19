@@ -1,0 +1,14 @@
+.env
+.env.local
+.env.*.local
+
+Frontend/node_modules
+Frontend/.next
+
+Backend/app/target
+Backend/app/uploads
+Backend/docker/mariadb/data
+
+.DS_Store
+.vscode
+.idea

@@ -1,0 +1,281 @@
+/* ==========================================
+   IMPORTANTE
+   Este CSS respeta EXACTAMENTE el HTML original
+   y solo neutraliza el layout de Keycloak
+   ========================================== */
+
+
+/* ===== reset keycloak ===== */
+
+html,
+body,
+.login-pf-page {
+  height: 100%;
+  background: #0f172a !important;
+  margin: 0;
+  overflow: hidden;
+}
+
+#kc-header,
+#kc-header-wrapper {
+  display: none !important;
+}
+
+#kc-content {
+  padding: 0 !important;
+}
+
+#kc-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#kc-info,
+#kc-info-wrapper,
+#kc-content-wrapper .alert,
+.alert-error,
+.alert-warning,
+.alert-success,
+.alert-info {
+  display: none !important;
+}
+
+.login-pf-page .card-pf {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+/* ==========================================
+   CSS ORIGINAL DEL HTML
+   ========================================== */
+
+:root {
+  --color-background: #0f172a;
+  --color-foreground: #f8fafc;
+  --color-card: #111827;
+  --color-card-foreground: #f8fafc;
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #1e293b;
+  --color-secondary-foreground: #f8fafc;
+  --color-muted-foreground: #94a3b8;
+  --color-border: #334155;
+  --color-input: #334155;
+  --color-ring: #3b82f6;
+  --radius: 0.5rem;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.625;
+  font-weight: 400;
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow-y: auto;
+  overflow: hidden;
+}
+
+.login-card__header {
+  text-align: center;
+  padding: 1.25rem 1.5rem 1rem 1.5rem;
+}
+
+.login-card__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-card__logo-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-primary);
+}
+
+.login-card__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.login-card__description {
+  font-size: 15px;
+  color: var(--color-muted-foreground);
+  margin-top: 0.5rem;
+}
+
+.login-card__content {
+  padding: 0 1.5rem;
+}
+
+.login-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.field__input {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-foreground);
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) - 2px);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field__input::placeholder {
+  color: var(--color-muted-foreground);
+}
+
+.field__input[readonly] {
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.field__input:focus {
+  border-color: var(--color-ring);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.field__hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--color-muted-foreground);
+}
+
+.login-error {
+  margin: 0 1.5rem 1rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  border-radius: calc(var(--radius) - 2px);
+  background: rgba(127, 29, 29, 0.18);
+  color: #fecaca;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.login-error a,
+.kc-feedback-text,
+.instruction {
+  color: inherit !important;
+}
+
+/* ==========================================
+   Button Component
+   ========================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 2.75rem;
+  padding: 0 1rem;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-primary-foreground);
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:hover {
+  background-color: #2563eb;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-ring);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   Footer Text & Links
+   ========================================== */
+
+.login-card__footer-text {
+  font-size: 15px;
+  color: var(--color-muted-foreground);
+  text-align: center;
+}
+
+.login-card__link {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: text-decoration 0.15s ease;
+}
+
+.login-card__link:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================
+   SVG Icon
+   ========================================== */
+
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#kc-page-title {
+  display: none !important;
+}

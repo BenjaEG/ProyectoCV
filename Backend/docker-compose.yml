@@ -1,0 +1,63 @@
+services:
+
+  mariadb:
+    image: mariadb:11
+    container_name: cv-mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./docker/mariadb/data:/var/lib/mysql
+      - ./docker/mariadb/init:/docker-entrypoint-initdb.d
+    networks:
+      - cv-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: cv-keycloak
+    command: start-dev
+    restart: always
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: mariadb
+      KC_DB_URL: jdbc:mariadb://mariadb:3306/keycloak
+      KC_DB_USERNAME: ${KC_DB_USERNAME:-cv_user}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-cv_pass}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mariadb
+    volumes:
+      - ./docker/keycloak/themes:/opt/keycloak/themes
+    networks:
+      - cv-network
+
+  backend:
+    build: ./app
+    container_name: cv-backend
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mariadb
+      - keycloak
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/centro_vecinal
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME:-cv_user}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD:-cv_pass}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/centro-vecinal
+      APP_KEYCLOAK_ADMIN_BASE_URL: http://keycloak:8080
+      APP_KEYCLOAK_ADMIN_REALM: centro-vecinal
+      APP_KEYCLOAK_ADMIN_CLIENT_ID: backend-admin-cli
+      APP_KEYCLOAK_ADMIN_CLIENT_SECRET: ${APP_KEYCLOAK_ADMIN_CLIENT_SECRET:-change-me}
+      APP_ATTACHMENTS_STORAGE_PATH: /app/uploads
+    volumes:
+      - ./app/uploads:/app/uploads
+    networks:
+      - cv-network
+
+networks:
+  cv-network:

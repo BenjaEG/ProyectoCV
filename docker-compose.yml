@@ -1,0 +1,80 @@
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: cv-mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./Backend/docker/mariadb/data:/var/lib/mysql
+      - ./Backend/docker/mariadb/init:/docker-entrypoint-initdb.d
+    networks:
+      - cv-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: cv-keycloak
+    command: start-dev
+    restart: always
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: mariadb
+      KC_DB_URL: jdbc:mariadb://mariadb:3306/keycloak
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mariadb
+    volumes:
+      - ./Backend/docker/keycloak/themes:/opt/keycloak/themes
+    networks:
+      - cv-network
+
+  backend:
+    build: ./Backend/app
+    container_name: cv-backend
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mariadb
+      - keycloak
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/centro_vecinal
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/centro-vecinal
+      APP_KEYCLOAK_ADMIN_BASE_URL: http://keycloak:8080
+      APP_KEYCLOAK_ADMIN_REALM: centro-vecinal
+      APP_KEYCLOAK_ADMIN_CLIENT_ID: backend-admin-cli
+      APP_KEYCLOAK_ADMIN_CLIENT_SECRET: ${APP_KEYCLOAK_ADMIN_CLIENT_SECRET}
+      APP_ATTACHMENTS_STORAGE_PATH: /app/uploads
+    volumes:
+      - ./Backend/app/uploads:/app/uploads
+    networks:
+      - cv-network
+
+  frontend:
+    build: ./Frontend
+    container_name: cv-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - keycloak
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8081
+      API_SERVER_BASE_URL: http://backend:8081
+      NEXT_PUBLIC_KEYCLOAK_URL: http://localhost:8080
+      NEXT_PUBLIC_KEYCLOAK_REALM: centro-vecinal
+      NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: centrovecinal-frontend
+    networks:
+      - cv-network
+
+networks:
+  cv-network:
