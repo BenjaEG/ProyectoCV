@@ -28,7 +28,7 @@ Sistema web de gestion vecinal con autenticacion centralizada, gestion de reclam
 
 Mas detalle en:
 
-- [Arquitectura](/home/benja/Escritorio/ProyectoCeVe/docs/architecture.md)
+- [Arquitectura](/docs/architecture.md)
 - [Runbook local](/home/benja/Escritorio/ProyectoCeVe/docs/runbook.md)
 - [Endpoints de la API](/home/benja/Escritorio/ProyectoCeVe/docs/api-endpoints.md)
 - [Ejemplos para Postman](/home/benja/Escritorio/ProyectoCeVe/docs/postman-examples.md)
