@@ -1,11 +1,19 @@
 import type {
   Comment,
+  Comprobante,
+  CuotaSocio,
+  EstadoComprobante,
   Event,
   NewsItem,
+  OrigenComprobante,
+  Socio,
+  SocioEstado,
+  SocioTipo,
   Ticket,
   TicketCategory,
   TicketCategoryOption,
   TicketSummary,
+  TipoComprobanteDoc,
   User,
   UserRole,
 } from '@/lib/types'
@@ -117,6 +125,63 @@ type BackendAdminUser = {
 type BackendAdminRole = {
   name: string
   description?: string | null
+}
+
+type BackendSocio = {
+  id: number
+  userId?: string | null
+  nombre: string
+  apellido: string
+  nombreCompleto: string
+  dni: string
+  domicilio: string
+  fechaAlta: string
+  fechaBaja?: string | null
+  tipoSocio: 'APORTANTE' | 'ADHERENTE' | 'HONORARIO'
+  estadoSocio: 'ACTIVO' | 'BAJA' | 'MOROSO'
+  observaciones?: string | null
+  createdAt?: string | null
+  updatedAt?: string | null
+}
+
+type BackendCuotaSocio = {
+  id: number
+  socioId: number
+  periodo: string
+  monto: number
+  estadoPago: 'PENDIENTE' | 'PAGADA' | 'VENCIDA' | 'ANULADA'
+  fechaVencimiento: string
+  fechaPago?: string | null
+  tipoComprobante?: string | null
+  numeroComprobante?: string | null
+  medioPago?: string | null
+  observacion?: string | null
+  createdAt?: string | null
+  updatedAt?: string | null
+}
+
+type BackendComprobante = {
+  id: number
+  numero: string
+  tipoComprobante: 'RECIBO' | 'COMPROBANTE_INTERNO'
+  estado: 'EMITIDO' | 'ANULADO'
+  origen: 'PAGO_SOCIO' | 'GASTOS_USO_SALON_COMUNITARIO' | 'EVENTO' | 'DONACION' | 'OTRO'
+  fechaEmision: string
+  concepto: string
+  descripcion?: string | null
+  monto: number
+  medioPago?: string | null
+  socioId?: number | null
+  socioNombreCompleto?: string | null
+  socioDni?: string | null
+  nombrePagador: string
+  dniPagador?: string | null
+  referenciaOrigenId?: string | null
+  observaciones?: string | null
+  createdByUsername: string
+  createdAt?: string | null
+  updatedAt?: string | null
+  anulledAt?: string | null
 }
 
 type RequestOptions = {
@@ -258,6 +323,124 @@ function mapEvent(item: BackendEvent): Event {
   }
 }
 
+function mapSocioTipo(tipoSocio: BackendSocio['tipoSocio']): SocioTipo {
+  switch (tipoSocio) {
+    case 'APORTANTE':
+      return 'aportante'
+    case 'ADHERENTE':
+      return 'adherente'
+    case 'HONORARIO':
+      return 'honorario'
+  }
+}
+
+function mapSocioEstado(estadoSocio: BackendSocio['estadoSocio']): SocioEstado {
+  switch (estadoSocio) {
+    case 'ACTIVO':
+      return 'activo'
+    case 'BAJA':
+      return 'baja'
+    case 'MOROSO':
+      return 'moroso'
+  }
+}
+
+function mapSocio(socio: BackendSocio): Socio {
+  return {
+    id: String(socio.id),
+    userId: socio.userId ?? undefined,
+    nombre: socio.nombre,
+    apellido: socio.apellido,
+    nombreCompleto: socio.nombreCompleto,
+    dni: socio.dni,
+    domicilio: socio.domicilio,
+    fechaAlta: socio.fechaAlta,
+    fechaBaja: socio.fechaBaja ?? undefined,
+    tipo: mapSocioTipo(socio.tipoSocio),
+    estado: mapSocioEstado(socio.estadoSocio),
+    observaciones: socio.observaciones ?? undefined,
+    createdAt: socio.createdAt ?? undefined,
+    updatedAt: socio.updatedAt ?? undefined,
+  }
+}
+
+function mapCuotaSocio(cuota: BackendCuotaSocio): CuotaSocio {
+  return {
+    id: String(cuota.id),
+    socioId: String(cuota.socioId),
+    periodo: cuota.periodo,
+    monto: Number(cuota.monto),
+    estadoPago: cuota.estadoPago.toLowerCase() as CuotaSocio['estadoPago'],
+    fechaVencimiento: cuota.fechaVencimiento,
+    fechaPago: cuota.fechaPago ?? undefined,
+    tipoComprobante: cuota.tipoComprobante ?? undefined,
+    numeroComprobante: cuota.numeroComprobante ?? undefined,
+    medioPago: cuota.medioPago ?? undefined,
+    observacion: cuota.observacion ?? undefined,
+    createdAt: cuota.createdAt ?? undefined,
+    updatedAt: cuota.updatedAt ?? undefined,
+  }
+}
+
+function mapComprobanteTipo(tipo: BackendComprobante['tipoComprobante']): TipoComprobanteDoc {
+  switch (tipo) {
+    case 'RECIBO':
+      return 'recibo'
+    case 'COMPROBANTE_INTERNO':
+      return 'comprobante_interno'
+  }
+}
+
+function mapComprobanteEstado(estado: BackendComprobante['estado']): EstadoComprobante {
+  switch (estado) {
+    case 'EMITIDO':
+      return 'emitido'
+    case 'ANULADO':
+      return 'anulado'
+  }
+}
+
+function mapComprobanteOrigen(origen: BackendComprobante['origen']): OrigenComprobante {
+  switch (origen) {
+    case 'PAGO_SOCIO':
+      return 'pago_socio'
+    case 'GASTOS_USO_SALON_COMUNITARIO':
+      return 'gastos_uso_salon_comunitario'
+    case 'EVENTO':
+      return 'evento'
+    case 'DONACION':
+      return 'donacion'
+    case 'OTRO':
+      return 'otro'
+  }
+}
+
+function mapComprobante(comprobante: BackendComprobante): Comprobante {
+  return {
+    id: String(comprobante.id),
+    numero: comprobante.numero,
+    tipo: mapComprobanteTipo(comprobante.tipoComprobante),
+    estado: mapComprobanteEstado(comprobante.estado),
+    origen: mapComprobanteOrigen(comprobante.origen),
+    fechaEmision: comprobante.fechaEmision,
+    concepto: comprobante.concepto,
+    descripcion: comprobante.descripcion ?? undefined,
+    monto: Number(comprobante.monto),
+    medioPago: comprobante.medioPago ?? undefined,
+    socioId: comprobante.socioId != null ? String(comprobante.socioId) : undefined,
+    socioNombreCompleto: comprobante.socioNombreCompleto ?? undefined,
+    socioDni: comprobante.socioDni ?? undefined,
+    nombrePagador: comprobante.nombrePagador,
+    dniPagador: comprobante.dniPagador ?? undefined,
+    referenciaOrigenId: comprobante.referenciaOrigenId ?? undefined,
+    observaciones: comprobante.observaciones ?? undefined,
+    createdByUsername: comprobante.createdByUsername,
+    createdAt: comprobante.createdAt ?? undefined,
+    updatedAt: comprobante.updatedAt ?? undefined,
+    anulledAt: comprobante.anulledAt ?? undefined,
+  }
+}
+
 function formatCreatedAt(timestamp?: number | null): string {
   if (!timestamp) {
     return new Date().toISOString().split('T')[0]
@@ -366,6 +549,33 @@ function normalizeApiErrorMessage(message: string): string {
   if (normalized.includes('no es una imagen valida')) {
     return 'El archivo no contiene una imagen valida.'
   }
+  if (normalized.includes('dni ya se encuentra registrado')) {
+    return 'Ya existe un socio con ese DNI.'
+  }
+  if (normalized.includes('ya existe una cuota para el periodo')) {
+    return 'Ya existe un pago cargado para ese periodo.'
+  }
+  if (normalized.includes('periodo debe tener formato yyyy-mm') || normalized.includes('periodo debe respetar el formato')) {
+    return 'El periodo debe tener formato YYYY-MM.'
+  }
+  if (normalized.includes('fecha de baja es obligatoria')) {
+    return 'Debes indicar la fecha de baja cuando el estado es Baja.'
+  }
+  if (normalized.includes('solo puede informarse si el socio esta en estado baja')) {
+    return 'La fecha de baja solo puede cargarse si el socio esta en estado Baja.'
+  }
+  if (normalized.includes('cuota anulada')) {
+    return 'El pago anulado no puede marcarse como pagado.'
+  }
+  if (normalized.includes('debes informar un socio o el nombre del pagador')) {
+    return 'Debes seleccionar un socio o cargar el nombre del pagador.'
+  }
+  if (normalized.includes('comprobante anulado')) {
+    return 'El comprobante anulado no puede editarse.'
+  }
+  if (normalized.includes('comprobante ya se encuentra anulado')) {
+    return 'El comprobante ya estaba anulado.'
+  }
 
   return message
 }
@@ -469,9 +679,518 @@ export async function fetchAdminUsersPage(
   }
 }
 
+export async function fetchUserLookupPage(
+  token: string,
+  search?: string,
+  page = 0,
+  size = 10
+): Promise<FrontendPageResponse<User>> {
+  const params = new URLSearchParams()
+  params.set('page', String(page))
+  params.set('size', String(size))
+
+  if (search?.trim()) {
+    params.set('search', search.trim())
+  }
+
+  const response = await apiRequest<PageResponse<BackendAdminUser>>(`/api/users/lookup?${params.toString()}`, { token })
+
+  return {
+    content: response.content.map(mapAdminUser),
+    page: response.page,
+    size: response.size,
+    totalElements: response.totalElements,
+    totalPages: response.totalPages,
+    first: response.first,
+    last: response.last,
+  }
+}
+
 export async function fetchAdminUserRoles(token: string): Promise<string[]> {
   const roles = await apiRequest<BackendAdminRole[]>('/api/admin/users/roles', { token })
   return roles.map((role) => role.name)
+}
+
+function mapSocioTipoToBackend(tipo: SocioTipo): BackendSocio['tipoSocio'] {
+  switch (tipo) {
+    case 'aportante':
+      return 'APORTANTE'
+    case 'adherente':
+      return 'ADHERENTE'
+    case 'honorario':
+      return 'HONORARIO'
+  }
+}
+
+function mapSocioEstadoToBackend(estado: SocioEstado): BackendSocio['estadoSocio'] {
+  switch (estado) {
+    case 'activo':
+      return 'ACTIVO'
+    case 'baja':
+      return 'BAJA'
+    case 'moroso':
+      return 'MOROSO'
+  }
+}
+
+export async function fetchSociosPage(
+  token: string,
+  filters: {
+    q?: string
+    estado?: SocioEstado | 'all'
+    tipo?: SocioTipo | 'all'
+    vinculado?: 'all' | 'yes' | 'no'
+    page?: number
+    size?: number
+  } = {}
+): Promise<FrontendPageResponse<Socio>> {
+  const params = new URLSearchParams()
+  params.set('page', String(filters.page ?? 0))
+  params.set('size', String(filters.size ?? 10))
+  params.set('sort', 'apellido,asc')
+
+  if (filters.q?.trim()) {
+    params.set('q', filters.q.trim())
+  }
+  if (filters.estado && filters.estado !== 'all') {
+    params.set('estado', mapSocioEstadoToBackend(filters.estado))
+  }
+  if (filters.tipo && filters.tipo !== 'all') {
+    params.set('tipo', mapSocioTipoToBackend(filters.tipo))
+  }
+  if (filters.vinculado === 'yes') {
+    params.set('vinculado', 'true')
+  }
+  if (filters.vinculado === 'no') {
+    params.set('vinculado', 'false')
+  }
+
+  const response = await apiRequest<PageResponse<BackendSocio>>(`/api/socios?${params.toString()}`, { token })
+
+  return {
+    content: response.content.map(mapSocio),
+    page: response.page,
+    size: response.size,
+    totalElements: response.totalElements,
+    totalPages: response.totalPages,
+    first: response.first,
+    last: response.last,
+  }
+}
+
+export async function fetchSocioById(token: string, socioId: string): Promise<Socio> {
+  const socio = await apiRequest<BackendSocio>(`/api/socios/${socioId}`, { token })
+  return mapSocio(socio)
+}
+
+export async function fetchMySocio(token: string): Promise<Socio> {
+  const socio = await apiRequest<BackendSocio>('/api/socios/me', { token })
+  return mapSocio(socio)
+}
+
+export async function createSocio(
+  token: string,
+  payload: {
+    nombre: string
+    apellido: string
+    dni: string
+    domicilio: string
+    fechaAlta: string
+    tipo: SocioTipo
+    observaciones?: string
+  }
+): Promise<Socio> {
+  const socio = await apiRequest<BackendSocio>('/api/socios', {
+    method: 'POST',
+    token,
+    body: {
+      nombre: payload.nombre.trim(),
+      apellido: payload.apellido.trim(),
+      dni: payload.dni.trim(),
+      domicilio: payload.domicilio.trim(),
+      fechaAlta: payload.fechaAlta,
+      tipoSocio: mapSocioTipoToBackend(payload.tipo),
+      observaciones: payload.observaciones?.trim() || null,
+    },
+  })
+
+  return mapSocio(socio)
+}
+
+export async function updateSocio(
+  token: string,
+  socioId: string,
+  payload: {
+    nombre: string
+    apellido: string
+    dni: string
+    domicilio: string
+    fechaAlta: string
+    tipo: SocioTipo
+    observaciones?: string
+  }
+): Promise<Socio> {
+  const socio = await apiRequest<BackendSocio>(`/api/socios/${socioId}`, {
+    method: 'PUT',
+    token,
+    body: {
+      nombre: payload.nombre.trim(),
+      apellido: payload.apellido.trim(),
+      dni: payload.dni.trim(),
+      domicilio: payload.domicilio.trim(),
+      fechaAlta: payload.fechaAlta,
+      tipoSocio: mapSocioTipoToBackend(payload.tipo),
+      observaciones: payload.observaciones?.trim() || null,
+    },
+  })
+
+  return mapSocio(socio)
+}
+
+export async function updateSocioEstado(
+  token: string,
+  socioId: string,
+  payload: {
+    estado: SocioEstado
+    fechaBaja?: string
+  }
+): Promise<Socio> {
+  const socio = await apiRequest<BackendSocio>(`/api/socios/${socioId}/estado`, {
+    method: 'PATCH',
+    token,
+    body: {
+      estadoSocio: mapSocioEstadoToBackend(payload.estado),
+      fechaBaja: payload.fechaBaja || null,
+    },
+  })
+
+  return mapSocio(socio)
+}
+
+export async function updateSocioVinculoUsuario(
+  token: string,
+  socioId: string,
+  userId?: string
+): Promise<Socio> {
+  const socio = await apiRequest<BackendSocio>(`/api/socios/${socioId}/vinculo-usuario`, {
+    method: 'PATCH',
+    token,
+    body: {
+      userId: userId?.trim() || null,
+    },
+  })
+
+  return mapSocio(socio)
+}
+
+export async function fetchCuotasSocioPage(
+  token: string,
+  socioId: string,
+  page = 0,
+  size = 20
+): Promise<FrontendPageResponse<CuotaSocio>> {
+  const params = new URLSearchParams()
+  params.set('page', String(page))
+  params.set('size', String(size))
+  params.set('sort', 'periodo,desc')
+
+  const response = await apiRequest<PageResponse<BackendCuotaSocio>>(`/api/socios/${socioId}/cuotas?${params.toString()}`, {
+    token,
+  })
+
+  return {
+    content: response.content.map(mapCuotaSocio),
+    page: response.page,
+    size: response.size,
+    totalElements: response.totalElements,
+    totalPages: response.totalPages,
+    first: response.first,
+    last: response.last,
+  }
+}
+
+export async function fetchMyCuotasSocioPage(
+  token: string,
+  page = 0,
+  size = 20
+): Promise<FrontendPageResponse<CuotaSocio>> {
+  const params = new URLSearchParams()
+  params.set('page', String(page))
+  params.set('size', String(size))
+  params.set('sort', 'periodo,desc')
+
+  const response = await apiRequest<PageResponse<BackendCuotaSocio>>(`/api/socios/me/cuotas?${params.toString()}`, {
+    token,
+  })
+
+  return {
+    content: response.content.map(mapCuotaSocio),
+    page: response.page,
+    size: response.size,
+    totalElements: response.totalElements,
+    totalPages: response.totalPages,
+    first: response.first,
+    last: response.last,
+  }
+}
+
+export async function createCuotaSocio(
+  token: string,
+  socioId: string,
+  payload: {
+    periodo: string
+    monto: number
+    fechaVencimiento: string
+    tipoComprobante?: string
+    numeroComprobante?: string
+    medioPago?: string
+    observacion?: string
+  }
+): Promise<CuotaSocio> {
+  const cuota = await apiRequest<BackendCuotaSocio>(`/api/socios/${socioId}/cuotas`, {
+    method: 'POST',
+    token,
+    body: {
+      periodo: payload.periodo,
+      monto: payload.monto,
+      fechaVencimiento: payload.fechaVencimiento,
+      tipoComprobante: payload.tipoComprobante?.trim() || null,
+      numeroComprobante: payload.numeroComprobante?.trim() || null,
+      medioPago: payload.medioPago?.trim() || null,
+      observacion: payload.observacion?.trim() || null,
+    },
+  })
+
+  return mapCuotaSocio(cuota)
+}
+
+export async function updateCuotaSocio(
+  token: string,
+  socioId: string,
+  cuotaId: string,
+  payload: {
+    periodo: string
+    monto: number
+    fechaVencimiento: string
+    tipoComprobante?: string
+    numeroComprobante?: string
+    medioPago?: string
+    observacion?: string
+  }
+): Promise<CuotaSocio> {
+  const cuota = await apiRequest<BackendCuotaSocio>(`/api/socios/${socioId}/cuotas/${cuotaId}`, {
+    method: 'PUT',
+    token,
+    body: {
+      periodo: payload.periodo,
+      monto: payload.monto,
+      fechaVencimiento: payload.fechaVencimiento,
+      tipoComprobante: payload.tipoComprobante?.trim() || null,
+      numeroComprobante: payload.numeroComprobante?.trim() || null,
+      medioPago: payload.medioPago?.trim() || null,
+      observacion: payload.observacion?.trim() || null,
+    },
+  })
+
+  return mapCuotaSocio(cuota)
+}
+
+export async function pagarCuotaSocio(
+  token: string,
+  socioId: string,
+  cuotaId: string,
+  payload: {
+    fechaPago: string
+    tipoComprobante?: string
+    numeroComprobante?: string
+    medioPago?: string
+    observacion?: string
+  }
+): Promise<CuotaSocio> {
+  const cuota = await apiRequest<BackendCuotaSocio>(`/api/socios/${socioId}/cuotas/${cuotaId}/pagar`, {
+    method: 'PATCH',
+    token,
+    body: {
+      fechaPago: payload.fechaPago,
+      tipoComprobante: payload.tipoComprobante?.trim() || null,
+      numeroComprobante: payload.numeroComprobante?.trim() || null,
+      medioPago: payload.medioPago?.trim() || null,
+      observacion: payload.observacion?.trim() || null,
+    },
+  })
+
+  return mapCuotaSocio(cuota)
+}
+
+export async function anularCuotaSocio(
+  token: string,
+  socioId: string,
+  cuotaId: string
+): Promise<CuotaSocio> {
+  const cuota = await apiRequest<BackendCuotaSocio>(`/api/socios/${socioId}/cuotas/${cuotaId}/anular`, {
+    method: 'PATCH',
+    token,
+  })
+
+  return mapCuotaSocio(cuota)
+}
+
+function mapTipoComprobanteToBackend(tipo: TipoComprobanteDoc): BackendComprobante['tipoComprobante'] {
+  switch (tipo) {
+    case 'recibo':
+      return 'RECIBO'
+    case 'comprobante_interno':
+      return 'COMPROBANTE_INTERNO'
+  }
+}
+
+function mapOrigenComprobanteToBackend(origen: OrigenComprobante): BackendComprobante['origen'] {
+  switch (origen) {
+    case 'pago_socio':
+      return 'PAGO_SOCIO'
+    case 'gastos_uso_salon_comunitario':
+      return 'GASTOS_USO_SALON_COMUNITARIO'
+    case 'evento':
+      return 'EVENTO'
+    case 'donacion':
+      return 'DONACION'
+    case 'otro':
+      return 'OTRO'
+  }
+}
+
+export async function fetchComprobantesPage(
+  token: string,
+  filters: {
+    q?: string
+    estado?: EstadoComprobante | 'all'
+    tipo?: TipoComprobanteDoc | 'all'
+    origen?: OrigenComprobante | 'all'
+    socioId?: string
+    page?: number
+    size?: number
+  } = {}
+): Promise<FrontendPageResponse<Comprobante>> {
+  const params = new URLSearchParams()
+
+  if (filters.q?.trim()) params.set('q', filters.q.trim())
+  if (filters.estado && filters.estado !== 'all') params.set('estado', filters.estado.toUpperCase())
+  if (filters.tipo && filters.tipo !== 'all') params.set('tipo', mapTipoComprobanteToBackend(filters.tipo))
+  if (filters.origen && filters.origen !== 'all') params.set('origen', mapOrigenComprobanteToBackend(filters.origen))
+  if (filters.socioId) params.set('socioId', filters.socioId)
+  params.set('page', String(filters.page ?? 0))
+  params.set('size', String(filters.size ?? 10))
+  params.set('sort', 'fechaEmision,desc')
+
+  const response = await apiRequest<PageResponse<BackendComprobante>>(`/api/comprobantes?${params.toString()}`, { token })
+
+  return {
+    content: response.content.map(mapComprobante),
+    page: response.page,
+    size: response.size,
+    totalElements: response.totalElements,
+    totalPages: response.totalPages,
+    first: response.first,
+    last: response.last,
+  }
+}
+
+export async function fetchComprobanteById(token: string, comprobanteId: string): Promise<Comprobante> {
+  const comprobante = await apiRequest<BackendComprobante>(`/api/comprobantes/${comprobanteId}`, { token })
+  return mapComprobante(comprobante)
+}
+
+export async function fetchMyPagoComprobante(token: string, cuotaId: string): Promise<Comprobante> {
+  const comprobante = await apiRequest<BackendComprobante>(`/api/socios/me/cuotas/${cuotaId}/comprobante`, { token })
+  return mapComprobante(comprobante)
+}
+
+export async function createComprobante(
+  token: string,
+  payload: {
+    socioId?: string
+    tipo: TipoComprobanteDoc
+    origen: OrigenComprobante
+    fechaEmision: string
+    concepto: string
+    descripcion?: string
+    monto: number
+    medioPago?: string
+    nombrePagador?: string
+    dniPagador?: string
+    referenciaOrigenId?: string
+    observaciones?: string
+  }
+): Promise<Comprobante> {
+  const comprobante = await apiRequest<BackendComprobante>('/api/comprobantes', {
+    method: 'POST',
+    token,
+    body: {
+      socioId: payload.socioId ? Number(payload.socioId) : null,
+      tipoComprobante: mapTipoComprobanteToBackend(payload.tipo),
+      origen: mapOrigenComprobanteToBackend(payload.origen),
+      fechaEmision: payload.fechaEmision,
+      concepto: payload.concepto.trim(),
+      descripcion: payload.descripcion?.trim() || null,
+      monto: payload.monto,
+      medioPago: payload.medioPago?.trim() || null,
+      nombrePagador: payload.nombrePagador?.trim() || null,
+      dniPagador: payload.dniPagador?.trim() || null,
+      referenciaOrigenId: payload.referenciaOrigenId?.trim() || null,
+      observaciones: payload.observaciones?.trim() || null,
+    },
+  })
+
+  return mapComprobante(comprobante)
+}
+
+export async function updateComprobante(
+  token: string,
+  comprobanteId: string,
+  payload: {
+    socioId?: string
+    tipo: TipoComprobanteDoc
+    origen: OrigenComprobante
+    fechaEmision: string
+    concepto: string
+    descripcion?: string
+    monto: number
+    medioPago?: string
+    nombrePagador?: string
+    dniPagador?: string
+    referenciaOrigenId?: string
+    observaciones?: string
+  }
+): Promise<Comprobante> {
+  const comprobante = await apiRequest<BackendComprobante>(`/api/comprobantes/${comprobanteId}`, {
+    method: 'PUT',
+    token,
+    body: {
+      socioId: payload.socioId ? Number(payload.socioId) : null,
+      tipoComprobante: mapTipoComprobanteToBackend(payload.tipo),
+      origen: mapOrigenComprobanteToBackend(payload.origen),
+      fechaEmision: payload.fechaEmision,
+      concepto: payload.concepto.trim(),
+      descripcion: payload.descripcion?.trim() || null,
+      monto: payload.monto,
+      medioPago: payload.medioPago?.trim() || null,
+      nombrePagador: payload.nombrePagador?.trim() || null,
+      dniPagador: payload.dniPagador?.trim() || null,
+      referenciaOrigenId: payload.referenciaOrigenId?.trim() || null,
+      observaciones: payload.observaciones?.trim() || null,
+    },
+  })
+
+  return mapComprobante(comprobante)
+}
+
+export async function anularComprobante(token: string, comprobanteId: string): Promise<Comprobante> {
+  const comprobante = await apiRequest<BackendComprobante>(`/api/comprobantes/${comprobanteId}/anular`, {
+    method: 'PATCH',
+    token,
+  })
+
+  return mapComprobante(comprobante)
 }
 
 export async function createAdminUser(

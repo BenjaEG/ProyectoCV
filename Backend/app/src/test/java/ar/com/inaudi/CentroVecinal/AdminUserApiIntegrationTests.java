@@ -1,7 +1,7 @@
 package ar.com.inaudi.CentroVecinal;
 
-import ar.com.inaudi.CentroVecinal.dto.admin.*;
-import ar.com.inaudi.CentroVecinal.service.AdminUserService;
+import ar.com.inaudi.CentroVecinal.modules.usuarios.dto.admin.*;
+import ar.com.inaudi.CentroVecinal.modules.usuarios.service.AdminUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

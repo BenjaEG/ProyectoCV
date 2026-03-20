@@ -12,7 +12,7 @@ export function HeroSection() {
     ? { href: '/admin', label: 'Ir al panel admin' }
     : hasRole('ROLE_OPERADOR')
       ? { href: '/staff', label: 'Ir al panel operativo' }
-      : { href: '/dashboard/tickets', label: 'Mis Reclamos' }
+      : { href: '/dashboard/tickets', label: 'Mi Vecino' }
 
   return (
     <section className="relative py-20 md:py-32 overflow-hidden">

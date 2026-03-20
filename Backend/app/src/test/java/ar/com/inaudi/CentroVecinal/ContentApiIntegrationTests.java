@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import ar.com.inaudi.CentroVecinal.model.Event;
-import ar.com.inaudi.CentroVecinal.model.News;
-import ar.com.inaudi.CentroVecinal.repository.EventRepository;
-import ar.com.inaudi.CentroVecinal.repository.NewsRepository;
+import ar.com.inaudi.CentroVecinal.modules.contenido.model.Event;
+import ar.com.inaudi.CentroVecinal.modules.contenido.model.News;
+import ar.com.inaudi.CentroVecinal.modules.contenido.repository.EventRepository;
+import ar.com.inaudi.CentroVecinal.modules.contenido.repository.NewsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

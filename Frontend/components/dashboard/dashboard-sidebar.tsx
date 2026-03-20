@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { ChevronUp, KeyRound, LayoutDashboard, LogOut, MapPinned, PlusCircle, Ticket, User } from 'lucide-react'
+import { ChevronUp, CreditCard, KeyRound, LayoutDashboard, LogOut, MapPinned, PlusCircle, Ticket, User } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 
 const menuItems = [
@@ -34,6 +34,11 @@ const menuItems = [
     title: 'Crear Reclamo',
     url: '/dashboard/tickets/new',
     icon: PlusCircle,
+  },
+  {
+    title: 'Mis Pagos',
+    url: '/dashboard/cuotas',
+    icon: CreditCard,
   },
   {
     title: 'Mi Perfil',

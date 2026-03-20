@@ -22,7 +22,7 @@ export function PublicNavbar() {
     ? { href: '/admin', label: 'Panel Admin' }
     : hasRole('ROLE_OPERADOR')
       ? { href: '/staff', label: 'Panel Operativo' }
-      : { href: '/dashboard/tickets', label: 'Mis Reclamos' }
+      : { href: '/dashboard/tickets', label: 'Mi Vecino' }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

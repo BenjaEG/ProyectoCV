@@ -47,7 +47,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/centro_vecinal
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/centro-vecinal
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:8080/realms/centro-vecinal
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/centro-vecinal/protocol/openid-connect/certs
       APP_KEYCLOAK_ADMIN_BASE_URL: http://keycloak:8080
       APP_KEYCLOAK_ADMIN_REALM: centro-vecinal
       APP_KEYCLOAK_ADMIN_CLIENT_ID: backend-admin-cli

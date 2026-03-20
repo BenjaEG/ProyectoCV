@@ -69,6 +69,70 @@ export interface Event {
   updatedAt?: string
 }
 
+export type SocioTipo = 'aportante' | 'adherente' | 'honorario'
+export type SocioEstado = 'activo' | 'baja' | 'moroso'
+export type EstadoPagoCuota = 'pendiente' | 'pagada' | 'vencida' | 'anulada'
+export type TipoComprobanteDoc = 'recibo' | 'comprobante_interno'
+export type EstadoComprobante = 'emitido' | 'anulado'
+export type OrigenComprobante = 'pago_socio' | 'gastos_uso_salon_comunitario' | 'evento' | 'donacion' | 'otro'
+
+export interface Socio {
+  id: string
+  userId?: string
+  nombre: string
+  apellido: string
+  nombreCompleto: string
+  dni: string
+  domicilio: string
+  fechaAlta: string
+  fechaBaja?: string
+  tipo: SocioTipo
+  estado: SocioEstado
+  observaciones?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface CuotaSocio {
+  id: string
+  socioId: string
+  periodo: string
+  monto: number
+  estadoPago: EstadoPagoCuota
+  fechaVencimiento: string
+  fechaPago?: string
+  tipoComprobante?: string
+  numeroComprobante?: string
+  medioPago?: string
+  observacion?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface Comprobante {
+  id: string
+  numero: string
+  tipo: TipoComprobanteDoc
+  estado: EstadoComprobante
+  origen: OrigenComprobante
+  fechaEmision: string
+  concepto: string
+  descripcion?: string
+  monto: number
+  medioPago?: string
+  socioId?: string
+  socioNombreCompleto?: string
+  socioDni?: string
+  nombrePagador: string
+  dniPagador?: string
+  referenciaOrigenId?: string
+  observaciones?: string
+  createdByUsername: string
+  createdAt?: string
+  updatedAt?: string
+  anulledAt?: string
+}
+
 export interface TicketCategoryOption {
   id: number
   value: TicketCategory
@@ -104,4 +168,41 @@ export const USER_ROLES: { value: UserRole; label: string }[] = [
   { value: 'neighbor', label: 'Vecino' },
   { value: 'staff', label: 'Personal' },
   { value: 'admin', label: 'Administrador' },
+]
+
+export const SOCIO_TIPOS: { value: SocioTipo; label: string }[] = [
+  { value: 'aportante', label: 'Aportante' },
+  { value: 'adherente', label: 'Adherente' },
+  { value: 'honorario', label: 'Honorario' },
+]
+
+export const SOCIO_ESTADOS: { value: SocioEstado; label: string }[] = [
+  { value: 'activo', label: 'Activo' },
+  { value: 'baja', label: 'Baja' },
+  { value: 'moroso', label: 'Moroso' },
+]
+
+export const CUOTA_ESTADOS: { value: EstadoPagoCuota; label: string }[] = [
+  { value: 'pendiente', label: 'Pendiente' },
+  { value: 'pagada', label: 'Pagada' },
+  { value: 'vencida', label: 'Vencida' },
+  { value: 'anulada', label: 'Anulada' },
+]
+
+export const COMPROBANTE_TIPOS: { value: TipoComprobanteDoc; label: string }[] = [
+  { value: 'recibo', label: 'Recibo' },
+  { value: 'comprobante_interno', label: 'Comprobante interno' },
+]
+
+export const COMPROBANTE_ESTADOS: { value: EstadoComprobante; label: string }[] = [
+  { value: 'emitido', label: 'Emitido' },
+  { value: 'anulado', label: 'Anulado' },
+]
+
+export const COMPROBANTE_ORIGENES: { value: OrigenComprobante; label: string }[] = [
+  { value: 'pago_socio', label: 'Pago socio' },
+  { value: 'gastos_uso_salon_comunitario', label: 'Gastos por uso de Salon Comunitario' },
+  { value: 'evento', label: 'Evento' },
+  { value: 'donacion', label: 'Donación' },
+  { value: 'otro', label: 'Otro' },
 ]

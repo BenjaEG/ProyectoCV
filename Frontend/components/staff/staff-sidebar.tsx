@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/sidebar'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { ChevronUp, KeyRound, LayoutDashboard, LogOut, MapPinned, Ticket, User } from 'lucide-react'
+import { ChevronUp, FileText, IdCard, KeyRound, LayoutDashboard, LogOut, MapPinned, Ticket, User } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 
 const menuItems = [
@@ -24,6 +24,16 @@ const menuItems = [
     title: 'Panel',
     url: '/staff',
     icon: LayoutDashboard,
+  },
+  {
+    title: 'Socios',
+    url: '/staff/socios',
+    icon: IdCard,
+  },
+  {
+    title: 'Comprobantes',
+    url: '/staff/comprobantes',
+    icon: FileText,
   },
   {
     title: 'Gestión de Reclamos',
