@@ -4,23 +4,30 @@ import { HeroSection } from '@/components/home/hero-section'
 import { NewsSection } from '@/components/home/news-section'
 import { EventsSection } from '@/components/home/events-section'
 import { ContactSection } from '@/components/home/contact-section'
-import { fetchPublicEvents, fetchPublicNews } from '@/lib/api'
+import { fetchPublicEvents, fetchPublicInstitutionSettings, fetchPublicNews } from '@/lib/api'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  const [news, events] = await Promise.all([fetchPublicNews(), fetchPublicEvents()])
+  const [news, events, institutionSettings] = await Promise.all([
+    fetchPublicNews(),
+    fetchPublicEvents(),
+    fetchPublicInstitutionSettings(),
+  ])
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <PublicNavbar />
+      <PublicNavbar centerName={institutionSettings.nombreCentroVecinal} />
       <main className="flex-1">
-        <HeroSection />
+        <HeroSection
+          centerName={institutionSettings.nombreCentroVecinal}
+          description={institutionSettings.descripcionHome}
+        />
         <NewsSection items={news.slice(0, 3)} />
         <EventsSection items={events.slice(0, 3)} />
-        <ContactSection />
+        <ContactSection settings={institutionSettings} />
       </main>
-      <PublicFooter />
+      <PublicFooter centerName={institutionSettings.nombreCentroVecinal} />
     </div>
   )
 }

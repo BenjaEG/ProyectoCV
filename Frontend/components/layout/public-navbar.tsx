@@ -14,7 +14,11 @@ const navLinks = [
   { href: '/#contacto', label: 'Contacto' },
 ]
 
-export function PublicNavbar() {
+interface PublicNavbarProps {
+  centerName: string
+}
+
+export function PublicNavbar({ centerName }: PublicNavbarProps) {
   const [open, setOpen] = useState(false)
   const { isAuthenticated, hasRole, login, logout } = useAuth()
 
@@ -29,7 +33,7 @@ export function PublicNavbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-3">
           <MapPinned className="h-8 w-8 text-primary" />
-          <span className="text-lg font-semibold tracking-tight text-foreground">Centro Vecinal</span>
+          <span className="text-lg font-semibold tracking-tight text-foreground">{`Centro Vecinal ${centerName}`}</span>
         </Link>
 
         {/* Desktop Navigation */}

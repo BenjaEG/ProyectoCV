@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { DashboardHeader } from '@/components/dashboard/dashboard-header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,7 @@ import { Loader2, Plus, Search, Ticket as TicketIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function TicketsPage() {
+  const router = useRouter()
   const { token } = useAuth()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<TicketStatus | 'all'>('all')
@@ -171,14 +173,18 @@ export default function TicketsPage() {
                   </TableHeader>
                   <TableBody>
                     {filteredTickets.map((ticket) => (
-                      <TableRow key={ticket.id} className="border-border">
+                      <TableRow
+                        key={ticket.id}
+                        className="cursor-pointer border-border hover:bg-secondary/30"
+                        onClick={() => router.push(`/dashboard/tickets/${ticket.id}`)}
+                      >
                         <TableCell className="font-mono text-sm text-muted-foreground py-4">
-                          <Link href={`/dashboard/tickets/${ticket.id}`} className="hover:text-primary">
+                          <Link href={`/dashboard/tickets/${ticket.id}`} className="hover:text-primary" onClick={(event) => event.stopPropagation()}>
                             {ticket.ticketCode}
                           </Link>
                         </TableCell>
                         <TableCell className="py-4">
-                          <Link href={`/dashboard/tickets/${ticket.id}`} className="text-[15px] text-foreground hover:text-primary font-medium">
+                          <Link href={`/dashboard/tickets/${ticket.id}`} className="text-[15px] text-foreground hover:text-primary font-medium" onClick={(event) => event.stopPropagation()}>
                             {ticket.title}
                           </Link>
                         </TableCell>

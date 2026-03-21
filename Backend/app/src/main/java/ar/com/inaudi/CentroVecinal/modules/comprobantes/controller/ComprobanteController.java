@@ -4,7 +4,6 @@ import ar.com.inaudi.CentroVecinal.dto.common.PageResponseDTO;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.dto.ComprobanteCreateRequest;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.dto.ComprobanteDetailResponse;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.dto.ComprobanteListItemResponse;
-import ar.com.inaudi.CentroVecinal.modules.comprobantes.dto.ComprobanteUpdateRequest;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.model.EstadoComprobante;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.model.OrigenComprobante;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.model.TipoComprobante;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,14 +53,6 @@ public class ComprobanteController {
     @PostMapping
     public ComprobanteDetailResponse createComprobante(@Valid @RequestBody ComprobanteCreateRequest request) {
         return comprobanteService.createComprobante(request, SecurityUtils.getCurrentUser());
-    }
-
-    @PutMapping("/{comprobanteId}")
-    public ComprobanteDetailResponse updateComprobante(
-            @PathVariable Long comprobanteId,
-            @Valid @RequestBody ComprobanteUpdateRequest request
-    ) {
-        return comprobanteService.updateComprobante(comprobanteId, request);
     }
 
     @PatchMapping("/{comprobanteId}/anular")

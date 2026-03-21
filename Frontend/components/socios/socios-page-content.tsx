@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { DashboardHeader } from '@/components/dashboard/dashboard-header'
 import { Badge } from '@/components/ui/badge'
@@ -38,6 +39,7 @@ function estadoBadgeClass(estado: SocioEstado): string {
 
 export function SociosPageContent({ section }: Props) {
   const { token, initialized } = useAuth()
+  const router = useRouter()
   const canCreate = section === 'admin'
   const basePath = section === 'admin' ? '/admin/socios' : '/staff/socios'
   const [search, setSearch] = useState('')
@@ -396,7 +398,11 @@ export function SociosPageContent({ section }: Props) {
                   </TableHeader>
                   <TableBody>
                     {socios.map((socio) => (
-                      <TableRow key={socio.id} className="border-border">
+                      <TableRow
+                        key={socio.id}
+                        className="cursor-pointer border-border hover:bg-secondary/30"
+                        onClick={() => router.push(`${basePath}/${socio.id}`)}
+                      >
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium text-foreground">{socio.nombreCompleto}</span>
@@ -423,11 +429,21 @@ export function SociosPageContent({ section }: Props) {
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Button asChild variant="ghost" size="sm">
-                              <Link href={`${basePath}/${socio.id}`}>
+                              <Link
+                                href={`${basePath}/${socio.id}`}
+                                onClick={(event) => event.stopPropagation()}
+                              >
                                 <Link2 className="h-4 w-4" />
                               </Link>
                             </Button>
-                            <Button variant="ghost" size="sm" onClick={() => openEditDialog(socio)}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(event) => {
+                                event.stopPropagation()
+                                openEditDialog(socio)
+                              }}
+                            >
                               <Pencil className="h-4 w-4" />
                             </Button>
                           </div>

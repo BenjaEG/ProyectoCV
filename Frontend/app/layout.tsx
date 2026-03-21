@@ -8,7 +8,7 @@ import './globals.css'
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: 'Centro Vecinal Barrio Inaudi',
+  title: 'Centro Vecinal',
   description: 'Portal comunitario para reclamos, noticias y comunicación vecinal',
   generator: 'v0.app',
   icons: {

@@ -6,7 +6,6 @@ import ar.com.inaudi.CentroVecinal.exception.ResourceNotFoundException;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.dto.ComprobanteCreateRequest;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.dto.ComprobanteDetailResponse;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.dto.ComprobanteListItemResponse;
-import ar.com.inaudi.CentroVecinal.modules.comprobantes.dto.ComprobanteUpdateRequest;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.mapper.ComprobanteMapper;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.model.Comprobante;
 import ar.com.inaudi.CentroVecinal.modules.comprobantes.model.EstadoComprobante;
@@ -141,42 +140,6 @@ public class ComprobanteService {
         comprobante.setCreatedByUsername(currentUser.username());
         comprobante.setCreatedAt(now);
         comprobante.setUpdatedAt(now);
-
-        return ComprobanteMapper.toDetail(comprobanteRepository.save(comprobante));
-    }
-
-    @Transactional
-    public ComprobanteDetailResponse updateComprobante(Long comprobanteId, ComprobanteUpdateRequest request) {
-        Comprobante comprobante = findExistingComprobante(comprobanteId);
-        if (comprobante.getEstado() == EstadoComprobante.ANULADO) {
-            throw new BadRequestException("No se puede editar un comprobante anulado");
-        }
-
-        Socio socio = resolveSocio(request.socioId());
-        Payload payload = normalizePayload(
-                socio,
-                request.nombrePagador(),
-                request.dniPagador(),
-                request.concepto(),
-                request.descripcion(),
-                request.medioPago(),
-                request.referenciaOrigenId(),
-                request.observaciones()
-        );
-
-        comprobante.setTipoComprobante(request.tipoComprobante());
-        comprobante.setOrigen(request.origen());
-        comprobante.setSocio(socio);
-        comprobante.setFechaEmision(request.fechaEmision());
-        comprobante.setConcepto(payload.concepto());
-        comprobante.setDescripcion(payload.descripcion());
-        comprobante.setMonto(request.monto());
-        comprobante.setMedioPago(payload.medioPago());
-        comprobante.setNombrePagador(payload.nombrePagador());
-        comprobante.setDniPagador(payload.dniPagador());
-        comprobante.setReferenciaOrigenId(payload.referenciaOrigenId());
-        comprobante.setObservaciones(payload.observaciones());
-        comprobante.setUpdatedAt(LocalDateTime.now());
 
         return ComprobanteMapper.toDetail(comprobanteRepository.save(comprobante));
     }

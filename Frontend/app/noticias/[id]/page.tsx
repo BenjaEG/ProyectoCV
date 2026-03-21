@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { PublicFooter } from '@/components/layout/public-footer'
 import { PublicNavbar } from '@/components/layout/public-navbar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { fetchPublicNewsDetail } from '@/lib/api'
+import { fetchPublicInstitutionSettings, fetchPublicNewsDetail } from '@/lib/api'
 import { Calendar } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -15,11 +15,14 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const { id } = await params
 
   try {
-    const news = await fetchPublicNewsDetail(id)
+    const [news, institutionSettings] = await Promise.all([
+      fetchPublicNewsDetail(id),
+      fetchPublicInstitutionSettings(),
+    ])
 
     return (
       <div className="flex min-h-screen flex-col bg-background text-foreground">
-        <PublicNavbar />
+        <PublicNavbar centerName={institutionSettings.nombreCentroVecinal} />
         <main className="container mx-auto flex-1 px-4 py-16">
           <Card className="mx-auto max-w-4xl border-border bg-card">
             <CardHeader className="space-y-4">
@@ -39,7 +42,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
             </CardContent>
           </Card>
         </main>
-        <PublicFooter />
+        <PublicFooter centerName={institutionSettings.nombreCentroVecinal} />
       </div>
     )
   } catch {

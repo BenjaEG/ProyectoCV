@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/use-auth'
 import {
   anularCuotaSocio,
   createCuotaSocio,
+  fetchComprobantesPage,
   fetchCuotasSocioPage,
   fetchSocioById,
   fetchUserLookupPage,
@@ -25,7 +26,7 @@ import {
   updateSocioEstado,
   updateSocioVinculoUsuario,
 } from '@/lib/api'
-import { CUOTA_ESTADOS, SOCIO_ESTADOS, SOCIO_TIPOS, type CuotaSocio, type Socio, type SocioEstado, type SocioTipo } from '@/lib/types'
+import { COMPROBANTE_TIPOS, CUOTA_ESTADOS, SOCIO_ESTADOS, SOCIO_TIPOS, type Comprobante, type CuotaSocio, type Socio, type SocioEstado, type SocioTipo } from '@/lib/types'
 import { AlertCircle, CalendarClock, CreditCard, Link2, Loader2, Pencil, ReceiptText, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -37,6 +38,7 @@ type Props = {
 const socioTipoLabelMap = Object.fromEntries(SOCIO_TIPOS.map((tipo) => [tipo.value, tipo.label])) as Record<SocioTipo, string>
 const socioEstadoLabelMap = Object.fromEntries(SOCIO_ESTADOS.map((estado) => [estado.value, estado.label])) as Record<SocioEstado, string>
 const cuotaEstadoLabelMap = Object.fromEntries(CUOTA_ESTADOS.map((estado) => [estado.value, estado.label])) as Record<CuotaSocio['estadoPago'], string>
+const comprobanteTipoLabelMap = Object.fromEntries(COMPROBANTE_TIPOS.map((tipo) => [tipo.value, tipo.label])) as Record<Comprobante['tipo'], string>
 
 function socioEstadoBadgeClass(estado: SocioEstado): string {
   switch (estado) {
@@ -117,12 +119,18 @@ export function SocioDetailContent({ section, socioId }: Props) {
   const [cuotaNumeroComprobante, setCuotaNumeroComprobante] = useState('')
   const [cuotaMedioPago, setCuotaMedioPago] = useState('')
   const [cuotaObservacion, setCuotaObservacion] = useState('')
+  const [cuotaComprobanteSearch, setCuotaComprobanteSearch] = useState('')
+  const [cuotaComprobanteResults, setCuotaComprobanteResults] = useState<Comprobante[]>([])
+  const [isSearchingCuotaComprobantes, setIsSearchingCuotaComprobantes] = useState(false)
 
   const [pagoFecha, setPagoFecha] = useState(new Date().toISOString().split('T')[0])
   const [pagoTipoComprobante, setPagoTipoComprobante] = useState('')
   const [pagoNumeroComprobante, setPagoNumeroComprobante] = useState('')
   const [pagoMedioPago, setPagoMedioPago] = useState('')
   const [pagoObservacion, setPagoObservacion] = useState('')
+  const [pagoComprobanteSearch, setPagoComprobanteSearch] = useState('')
+  const [pagoComprobanteResults, setPagoComprobanteResults] = useState<Comprobante[]>([])
+  const [isSearchingPagoComprobantes, setIsSearchingPagoComprobantes] = useState(false)
 
   useEffect(() => {
     if (!initialized || !token) {
@@ -208,6 +216,82 @@ export function SocioDetailContent({ section, socioId }: Props) {
     }
   }, [isVinculoDialogOpen, token, userSearch])
 
+  useEffect(() => {
+    if (!token || !isCuotaDialogOpen) {
+      return
+    }
+
+    let cancelled = false
+
+    async function loadComprobantes() {
+      try {
+        setIsSearchingCuotaComprobantes(true)
+        const page = await fetchComprobantesPage(token, {
+          q: cuotaComprobanteSearch,
+          page: 0,
+          size: 8,
+        })
+
+        if (!cancelled) {
+          setCuotaComprobanteResults(page.content)
+        }
+      } catch (error) {
+        if (!cancelled) {
+          toast.error(getReadableErrorMessage(error, 'No se pudieron buscar comprobantes'))
+          setCuotaComprobanteResults([])
+        }
+      } finally {
+        if (!cancelled) {
+          setIsSearchingCuotaComprobantes(false)
+        }
+      }
+    }
+
+    void loadComprobantes()
+
+    return () => {
+      cancelled = true
+    }
+  }, [cuotaComprobanteSearch, isCuotaDialogOpen, token])
+
+  useEffect(() => {
+    if (!token || !isPagarDialogOpen) {
+      return
+    }
+
+    let cancelled = false
+
+    async function loadComprobantes() {
+      try {
+        setIsSearchingPagoComprobantes(true)
+        const page = await fetchComprobantesPage(token, {
+          q: pagoComprobanteSearch,
+          page: 0,
+          size: 8,
+        })
+
+        if (!cancelled) {
+          setPagoComprobanteResults(page.content)
+        }
+      } catch (error) {
+        if (!cancelled) {
+          toast.error(getReadableErrorMessage(error, 'No se pudieron buscar comprobantes'))
+          setPagoComprobanteResults([])
+        }
+      } finally {
+        if (!cancelled) {
+          setIsSearchingPagoComprobantes(false)
+        }
+      }
+    }
+
+    void loadComprobantes()
+
+    return () => {
+      cancelled = true
+    }
+  }, [isPagarDialogOpen, pagoComprobanteSearch, token])
+
   function hydrateSocioForm(nextSocio: Socio) {
     setFormNombre(nextSocio.nombre)
     setFormApellido(nextSocio.apellido)
@@ -231,6 +315,7 @@ export function SocioDetailContent({ section, socioId }: Props) {
       setCuotaNumeroComprobante(cuota.numeroComprobante ?? '')
       setCuotaMedioPago(cuota.medioPago ?? '')
       setCuotaObservacion(cuota.observacion ?? '')
+      setCuotaComprobanteSearch(cuota.numeroComprobante ?? '')
       return
     }
 
@@ -241,6 +326,7 @@ export function SocioDetailContent({ section, socioId }: Props) {
     setCuotaNumeroComprobante('')
     setCuotaMedioPago('')
     setCuotaObservacion('')
+    setCuotaComprobanteSearch('')
   }
 
   function resetPagoForm(cuota?: CuotaSocio) {
@@ -249,6 +335,19 @@ export function SocioDetailContent({ section, socioId }: Props) {
     setPagoNumeroComprobante(cuota?.numeroComprobante ?? '')
     setPagoMedioPago(cuota?.medioPago ?? '')
     setPagoObservacion(cuota?.observacion ?? '')
+    setPagoComprobanteSearch(cuota?.numeroComprobante ?? '')
+  }
+
+  function handleSelectCuotaComprobante(comprobante: Comprobante) {
+    setCuotaNumeroComprobante(comprobante.numero)
+    setCuotaTipoComprobante(comprobanteTipoLabelMap[comprobante.tipo])
+    setCuotaComprobanteSearch(comprobante.numero)
+  }
+
+  function handleSelectPagoComprobante(comprobante: Comprobante) {
+    setPagoNumeroComprobante(comprobante.numero)
+    setPagoTipoComprobante(comprobanteTipoLabelMap[comprobante.tipo])
+    setPagoComprobanteSearch(comprobante.numero)
   }
 
   async function handleSocioSubmit(event: React.FormEvent) {
@@ -792,7 +891,53 @@ export function SocioDetailContent({ section, socioId }: Props) {
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="cuota-numero-comprobante">Numero de comprobante</FieldLabel>
-                      <Input id="cuota-numero-comprobante" value={cuotaNumeroComprobante} onChange={(event) => setCuotaNumeroComprobante(event.target.value)} className="bg-secondary border-border" />
+                      <div className="space-y-3">
+                        <Input
+                          id="cuota-numero-comprobante"
+                          value={cuotaComprobanteSearch}
+                          onChange={(event) => setCuotaComprobanteSearch(event.target.value)}
+                          placeholder="Buscar comprobante por numero"
+                          className="bg-secondary border-border"
+                        />
+                        <div className="rounded-lg border border-border bg-secondary/20 p-2">
+                          {cuotaNumeroComprobante ? (
+                            <p className="px-1 pb-2 text-xs text-muted-foreground">
+                              Seleccionado: <span className="font-medium text-foreground">{cuotaNumeroComprobante}</span>
+                            </p>
+                          ) : null}
+                          <div className="max-h-44 space-y-2 overflow-y-auto">
+                            {isSearchingCuotaComprobantes ? (
+                              <div className="flex items-center justify-center py-4 text-sm text-muted-foreground">
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Buscando comprobantes...
+                              </div>
+                            ) : cuotaComprobanteResults.length === 0 ? (
+                              <p className="py-4 text-center text-sm text-muted-foreground">No se encontraron comprobantes.</p>
+                            ) : (
+                              cuotaComprobanteResults.map((comprobante) => (
+                                <button
+                                  key={comprobante.id}
+                                  type="button"
+                                  onClick={() => handleSelectCuotaComprobante(comprobante)}
+                                  className={`w-full rounded-lg border p-3 text-left transition-colors ${
+                                    cuotaNumeroComprobante === comprobante.numero
+                                      ? 'border-primary bg-primary/10'
+                                      : 'border-border bg-background hover:bg-secondary/60'
+                                  }`}
+                                >
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div>
+                                      <p className="font-medium text-foreground">{comprobante.numero}</p>
+                                      <p className="text-sm text-muted-foreground">{comprobante.concepto}</p>
+                                    </div>
+                                    <span className="text-xs text-muted-foreground">{comprobante.fechaEmision}</span>
+                                  </div>
+                                </button>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="cuota-medio-pago">Medio de pago</FieldLabel>
@@ -923,7 +1068,53 @@ export function SocioDetailContent({ section, socioId }: Props) {
                                       </Field>
                                       <Field>
                                         <FieldLabel htmlFor="pago-numero">Numero de comprobante</FieldLabel>
-                                        <Input id="pago-numero" value={pagoNumeroComprobante} onChange={(event) => setPagoNumeroComprobante(event.target.value)} className="bg-secondary border-border" />
+                                        <div className="space-y-3">
+                                          <Input
+                                            id="pago-numero"
+                                            value={pagoComprobanteSearch}
+                                            onChange={(event) => setPagoComprobanteSearch(event.target.value)}
+                                            placeholder="Buscar comprobante por numero"
+                                            className="bg-secondary border-border"
+                                          />
+                                          <div className="rounded-lg border border-border bg-secondary/20 p-2">
+                                            {pagoNumeroComprobante ? (
+                                              <p className="px-1 pb-2 text-xs text-muted-foreground">
+                                                Seleccionado: <span className="font-medium text-foreground">{pagoNumeroComprobante}</span>
+                                              </p>
+                                            ) : null}
+                                            <div className="max-h-44 space-y-2 overflow-y-auto">
+                                              {isSearchingPagoComprobantes ? (
+                                                <div className="flex items-center justify-center py-4 text-sm text-muted-foreground">
+                                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                  Buscando comprobantes...
+                                                </div>
+                                              ) : pagoComprobanteResults.length === 0 ? (
+                                                <p className="py-4 text-center text-sm text-muted-foreground">No se encontraron comprobantes.</p>
+                                              ) : (
+                                                pagoComprobanteResults.map((comprobante) => (
+                                                  <button
+                                                    key={comprobante.id}
+                                                    type="button"
+                                                    onClick={() => handleSelectPagoComprobante(comprobante)}
+                                                    className={`w-full rounded-lg border p-3 text-left transition-colors ${
+                                                      pagoNumeroComprobante === comprobante.numero
+                                                        ? 'border-primary bg-primary/10'
+                                                        : 'border-border bg-background hover:bg-secondary/60'
+                                                    }`}
+                                                  >
+                                                    <div className="flex items-start justify-between gap-3">
+                                                      <div>
+                                                        <p className="font-medium text-foreground">{comprobante.numero}</p>
+                                                        <p className="text-sm text-muted-foreground">{comprobante.concepto}</p>
+                                                      </div>
+                                                      <span className="text-xs text-muted-foreground">{comprobante.fechaEmision}</span>
+                                                    </div>
+                                                  </button>
+                                                ))
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
                                       </Field>
                                       <Field>
                                         <FieldLabel htmlFor="pago-medio">Medio de pago</FieldLabel>

@@ -69,6 +69,23 @@ export interface Event {
   updatedAt?: string
 }
 
+export interface InstitutionSettings {
+  id: string
+  nombreCentroVecinal: string
+  descripcionHome: string
+  descripcionContacto: string
+  mostrarTelefono: boolean
+  telefono?: string
+  mostrarEmail: boolean
+  email?: string
+  mostrarDireccion: boolean
+  direccion?: string
+  mostrarHorarioAtencion: boolean
+  horarioAtencion?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
 export type SocioTipo = 'aportante' | 'adherente' | 'honorario'
 export type SocioEstado = 'activo' | 'baja' | 'moroso'
 export type EstadoPagoCuota = 'pendiente' | 'pagada' | 'vencida' | 'anulada'

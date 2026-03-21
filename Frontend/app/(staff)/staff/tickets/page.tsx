@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { DashboardHeader } from '@/components/dashboard/dashboard-header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -16,6 +17,7 @@ import { Loader2, Search, Ticket as TicketIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function StaffTicketsPage() {
+  const router = useRouter()
   const { token } = useAuth()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<TicketStatus | 'all'>('all')
@@ -175,14 +177,18 @@ export default function StaffTicketsPage() {
                   </TableHeader>
                   <TableBody>
                     {tickets.map((ticket) => (
-                      <TableRow key={ticket.id} className="border-border">
+                      <TableRow
+                        key={ticket.id}
+                        className="cursor-pointer border-border hover:bg-secondary/30"
+                        onClick={() => router.push(`/staff/tickets/${ticket.id}`)}
+                      >
                         <TableCell className="font-mono text-sm text-muted-foreground">
-                          <Link href={`/staff/tickets/${ticket.id}`} className="hover:text-primary">
+                          <Link href={`/staff/tickets/${ticket.id}`} className="hover:text-primary" onClick={(event) => event.stopPropagation()}>
                             {ticket.ticketCode}
                           </Link>
                         </TableCell>
                         <TableCell>
-                          <Link href={`/staff/tickets/${ticket.id}`} className="text-foreground hover:text-primary font-medium">
+                          <Link href={`/staff/tickets/${ticket.id}`} className="text-foreground hover:text-primary font-medium" onClick={(event) => event.stopPropagation()}>
                             {ticket.title}
                           </Link>
                         </TableCell>

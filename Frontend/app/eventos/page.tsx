@@ -1,17 +1,20 @@
 import { PublicFooter } from '@/components/layout/public-footer'
 import { PublicNavbar } from '@/components/layout/public-navbar'
 import { EventCards } from '@/components/home/event-cards'
-import { fetchPublicEvents } from '@/lib/api'
+import { fetchPublicEvents, fetchPublicInstitutionSettings } from '@/lib/api'
 import { CalendarDays } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
 export default async function EventsPage() {
-  const events = await fetchPublicEvents()
+  const [events, institutionSettings] = await Promise.all([
+    fetchPublicEvents(),
+    fetchPublicInstitutionSettings(),
+  ])
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <PublicNavbar />
+      <PublicNavbar centerName={institutionSettings.nombreCentroVecinal} />
       <main className="container mx-auto flex-1 px-4 py-16">
         <div className="mb-10 flex items-center gap-3">
           <CalendarDays className="h-8 w-8 text-primary" />
@@ -22,7 +25,7 @@ export default async function EventsPage() {
         </div>
         <EventCards items={events} />
       </main>
-      <PublicFooter />
+      <PublicFooter centerName={institutionSettings.nombreCentroVecinal} />
     </div>
   )
 }

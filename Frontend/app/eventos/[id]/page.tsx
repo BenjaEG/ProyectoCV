@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { PublicFooter } from '@/components/layout/public-footer'
 import { PublicNavbar } from '@/components/layout/public-navbar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { fetchPublicEventDetail } from '@/lib/api'
+import { fetchPublicEventDetail, fetchPublicInstitutionSettings } from '@/lib/api'
 import { CalendarDays, Clock, MapPin } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
@@ -15,11 +15,14 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
   const { id } = await params
 
   try {
-    const event = await fetchPublicEventDetail(id)
+    const [event, institutionSettings] = await Promise.all([
+      fetchPublicEventDetail(id),
+      fetchPublicInstitutionSettings(),
+    ])
 
     return (
       <div className="flex min-h-screen flex-col bg-background text-foreground">
-        <PublicNavbar />
+        <PublicNavbar centerName={institutionSettings.nombreCentroVecinal} />
         <main className="container mx-auto flex-1 px-4 py-16">
           <Card className="mx-auto max-w-4xl border-border bg-card">
             <CardHeader className="space-y-5">
@@ -51,7 +54,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
             </CardContent>
           </Card>
         </main>
-        <PublicFooter />
+        <PublicFooter centerName={institutionSettings.nombreCentroVecinal} />
       </div>
     )
   } catch {

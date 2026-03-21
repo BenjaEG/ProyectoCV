@@ -5,7 +5,12 @@ import { Button } from '@/components/ui/button'
 import { FileText, LogIn } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 
-export function HeroSection() {
+interface HeroSectionProps {
+  centerName: string
+  description: string
+}
+
+export function HeroSection({ centerName, description }: HeroSectionProps) {
   const { isAuthenticated, hasRole, login } = useAuth()
 
   const dashboardLink = hasRole('ROLE_ADMIN')
@@ -22,11 +27,10 @@ export function HeroSection() {
       <div className="container mx-auto px-4 relative">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-foreground mb-8">
-            Centro Vecinal Barrio Inaudi
+            {`Centro Vecinal ${centerName}`}
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-10 text-pretty max-w-2xl mx-auto">
-            Portal comunitario para reclamos, noticias y comunicación vecinal. 
-            Trabajamos juntos por un barrio mejor.
+            {description}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/dashboard/tickets/new">

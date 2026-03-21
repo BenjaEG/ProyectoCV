@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { DashboardHeader } from '@/components/dashboard/dashboard-header'
 import { Badge } from '@/components/ui/badge'
@@ -17,11 +18,9 @@ import { useAuth } from '@/hooks/use-auth'
 import {
   anularComprobante,
   createComprobante,
-  fetchComprobanteById,
   fetchComprobantesPage,
   fetchSociosPage,
   getReadableErrorMessage,
-  updateComprobante,
 } from '@/lib/api'
 import {
   COMPROBANTE_ESTADOS,
@@ -37,11 +36,9 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
-  FilePenLine,
   FileText,
   Link2,
   Loader2,
-  Pencil,
   Plus,
   Printer,
   Search,
@@ -76,6 +73,7 @@ function formatCurrency(amount: number): string {
 
 export function ComprobantesPageContent({ section }: Props) {
   const { token, initialized } = useAuth()
+  const router = useRouter()
   const basePath = section === 'admin' ? '/admin/comprobantes' : '/staff/comprobantes'
 
   const [search, setSearch] = useState('')
@@ -91,8 +89,6 @@ export function ComprobantesPageContent({ section }: Props) {
   const [reloadKey, setReloadKey] = useState(0)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  const [editingComprobante, setEditingComprobante] = useState<Comprobante | null>(null)
-  const [loadingEditComprobanteId, setLoadingEditComprobanteId] = useState<string | null>(null)
 
   const [tipo, setTipo] = useState<TipoComprobanteDoc>('recibo')
   const [origen, setOrigen] = useState<OrigenComprobante>('pago_socio')
@@ -227,59 +223,8 @@ export function ComprobantesPageContent({ section }: Props) {
   }
 
   function openCreateDialog() {
-    setEditingComprobante(null)
     resetForm()
     setIsDialogOpen(true)
-  }
-
-  function fillForm(comprobante: Comprobante) {
-    setTipo(comprobante.tipo)
-    setOrigen(comprobante.origen)
-    setFechaEmision(comprobante.fechaEmision)
-    setConcepto(comprobante.concepto)
-    setDescripcion(comprobante.descripcion ?? '')
-    setMonto(String(comprobante.monto))
-    setMedioPago(comprobante.medioPago ?? '')
-    setNombrePagador(comprobante.nombrePagador)
-    setDniPagador(comprobante.dniPagador ?? '')
-    setReferenciaOrigenId(comprobante.referenciaOrigenId ?? '')
-    setObservaciones(comprobante.observaciones ?? '')
-    setSelectedSocio(
-      comprobante.socioId
-        ? {
-            id: comprobante.socioId,
-            nombre: '',
-            apellido: '',
-            nombreCompleto: comprobante.socioNombreCompleto ?? 'Socio vinculado',
-            dni: comprobante.socioDni ?? '',
-            domicilio: '',
-            fechaAlta: '',
-            tipo: 'aportante',
-            estado: 'activo',
-          }
-        : null
-    )
-    setSocioSearch('')
-    setSociosEncontrados([])
-  }
-
-  async function openEditDialog(comprobanteId: string) {
-    if (!token) {
-      toast.error('La sesión no está disponible')
-      return
-    }
-
-    setLoadingEditComprobanteId(comprobanteId)
-    try {
-      const comprobante = await fetchComprobanteById(token, comprobanteId)
-      setEditingComprobante(comprobante)
-      fillForm(comprobante)
-      setIsDialogOpen(true)
-    } catch (error) {
-      toast.error(getReadableErrorMessage(error, 'No se pudo cargar el comprobante'))
-    } finally {
-      setLoadingEditComprobanteId(null)
-    }
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -307,13 +252,8 @@ export function ComprobantesPageContent({ section }: Props) {
         observaciones,
       }
 
-      if (editingComprobante) {
-        await updateComprobante(token, editingComprobante.id, payload)
-        toast.success('Comprobante actualizado correctamente')
-      } else {
-        await createComprobante(token, payload)
-        toast.success('Comprobante emitido correctamente')
-      }
+      await createComprobante(token, payload)
+      toast.success('Comprobante emitido correctamente')
 
       setIsDialogOpen(false)
       setReloadKey((current) => current + 1)
@@ -382,12 +322,7 @@ export function ComprobantesPageContent({ section }: Props) {
             <CardTitle className="text-foreground">Listado de comprobantes</CardTitle>
             <Dialog
               open={isDialogOpen}
-              onOpenChange={(open) => {
-                setIsDialogOpen(open)
-                if (!open) {
-                  setEditingComprobante(null)
-                }
-              }}
+              onOpenChange={setIsDialogOpen}
             >
               <DialogTrigger asChild>
                 <Button onClick={openCreateDialog} className="w-full md:w-auto">
@@ -397,7 +332,7 @@ export function ComprobantesPageContent({ section }: Props) {
               </DialogTrigger>
               <DialogContent className="max-h-[90vh] overflow-y-auto bg-card border-border">
                 <DialogHeader>
-                  <DialogTitle>{editingComprobante ? 'Editar comprobante' : 'Emitir comprobante'}</DialogTitle>
+                  <DialogTitle>Emitir comprobante</DialogTitle>
                   <DialogDescription>
                     Crea un comprobante imprimible, con vínculo opcional a un socio.
                   </DialogDescription>
@@ -539,7 +474,7 @@ export function ComprobantesPageContent({ section }: Props) {
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           Guardando...
                         </>
-                      ) : editingComprobante ? 'Actualizar comprobante' : 'Emitir comprobante'}
+                      ) : 'Emitir comprobante'}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -636,7 +571,11 @@ export function ComprobantesPageContent({ section }: Props) {
                     </TableHeader>
                     <TableBody>
                       {comprobantes.map((comprobante) => (
-                        <TableRow key={comprobante.id} className="border-border">
+                        <TableRow
+                          key={comprobante.id}
+                          className="cursor-pointer border-border hover:bg-secondary/30"
+                          onClick={() => router.push(`${basePath}/${comprobante.id}`)}
+                        >
                           <TableCell className="font-medium text-foreground">{comprobante.numero}</TableCell>
                           <TableCell className="text-muted-foreground">{comprobante.fechaEmision}</TableCell>
                           <TableCell className="text-foreground">{comprobante.concepto}</TableCell>
@@ -653,27 +592,32 @@ export function ComprobantesPageContent({ section }: Props) {
                           <TableCell className="text-right">
                             <div className="flex flex-wrap items-center justify-end gap-2">
                               <Button variant="ghost" size="sm" asChild>
-                                <Link href={`${basePath}/${comprobante.id}`}>
+                                <Link
+                                  href={`${basePath}/${comprobante.id}`}
+                                  onClick={(event) => event.stopPropagation()}
+                                >
                                   <FileText className="h-4 w-4" />
                                 </Link>
                               </Button>
                               <Button variant="ghost" size="sm" asChild>
-                                <Link href={`/comprobantes/${comprobante.id}/print`} target="_blank">
+                                <Link
+                                  href={`/comprobantes/${comprobante.id}/print`}
+                                  target="_blank"
+                                  onClick={(event) => event.stopPropagation()}
+                                >
                                   <Printer className="h-4 w-4" />
                                 </Link>
                               </Button>
                               {comprobante.estado !== 'anulado' && (
-                                <Button variant="ghost" size="sm" onClick={() => void openEditDialog(comprobante.id)} disabled={loadingEditComprobanteId === comprobante.id}>
-                                  {loadingEditComprobanteId === comprobante.id ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <Pencil className="h-4 w-4" />
-                                  )}
-                                </Button>
-                              )}
-                              {comprobante.estado !== 'anulado' && (
-                                <Button variant="ghost" size="sm" onClick={() => void handleAnular(comprobante.id)}>
-                                  <FilePenLine className="mr-1 h-4 w-4" />
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(event) => {
+                                    event.stopPropagation()
+                                    void handleAnular(comprobante.id)
+                                  }}
+                                >
+                                  <FileText className="mr-1 h-4 w-4" />
                                   Anular
                                 </Button>
                               )}

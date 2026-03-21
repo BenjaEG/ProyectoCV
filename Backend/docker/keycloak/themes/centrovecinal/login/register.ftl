@@ -33,12 +33,6 @@ Registrarse
 
       <div class="login-card__content">
 
-        <input
-               id="username"
-               name="username"
-               type="hidden"
-               value="${(register.formData.username!'')}" />
-
         <div class="field-group">
 
           <div class="field">
@@ -109,24 +103,6 @@ Registrarse
 
   </div>
 </div>
-
-<script>
-  (function () {
-    const emailInput = document.querySelector('input[name="email"]')
-    const usernameInput = document.getElementById('username')
-
-    if (!emailInput || !usernameInput) {
-      return
-    }
-
-    const syncUsername = () => {
-      usernameInput.value = emailInput.value.trim().toLowerCase()
-    }
-
-    emailInput.addEventListener('input', syncUsername)
-    syncUsername()
-  })()
-</script>
 
 </#if>
 

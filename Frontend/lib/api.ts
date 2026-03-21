@@ -4,6 +4,7 @@ import type {
   CuotaSocio,
   EstadoComprobante,
   Event,
+  InstitutionSettings,
   NewsItem,
   OrigenComprobante,
   Socio,
@@ -18,11 +19,22 @@ import type {
   UserRole,
 } from '@/lib/types'
 
-const PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8081'
-const SERVER_API_BASE_URL = process.env.API_SERVER_BASE_URL ?? PUBLIC_API_BASE_URL
+function getPublicApiBaseUrl(): string {
+  const value = process.env.NEXT_PUBLIC_API_BASE_URL?.trim()
+  return value && value.length > 0 ? value : 'http://localhost:8081'
+}
+
+function getServerApiBaseUrl(): string {
+  const serverValue = process.env.API_SERVER_BASE_URL?.trim()
+  if (serverValue && serverValue.length > 0) {
+    return serverValue
+  }
+
+  return getPublicApiBaseUrl()
+}
 
 function getApiBaseUrl(): string {
-  return typeof window === 'undefined' ? SERVER_API_BASE_URL : PUBLIC_API_BASE_URL
+  return typeof window === 'undefined' ? getServerApiBaseUrl() : getPublicApiBaseUrl()
 }
 
 export type TicketQueryFilters = {
@@ -184,6 +196,23 @@ type BackendComprobante = {
   anulledAt?: string | null
 }
 
+type BackendInstitutionSettings = {
+  id: number
+  nombreCentroVecinal: string
+  descripcionHome: string
+  descripcionContacto: string
+  mostrarTelefono: boolean
+  telefono?: string | null
+  mostrarEmail: boolean
+  email?: string | null
+  mostrarDireccion: boolean
+  direccion?: string | null
+  mostrarHorarioAtencion: boolean
+  horarioAtencion?: string | null
+  createdAt?: string | null
+  updatedAt?: string | null
+}
+
 type RequestOptions = {
   method?: string
   token?: string
@@ -271,7 +300,7 @@ function mapTicket(ticket: BackendTicketListItem | BackendTicketDetail): Ticket 
         ? ticket.attachments.map((attachment) =>
             attachment.filePath.startsWith('http')
               ? attachment.filePath
-              : `${PUBLIC_API_BASE_URL}${attachment.filePath}`
+              : `${getPublicApiBaseUrl()}${attachment.filePath}`
           )
         : [],
     createdBy: 'createdByUserId' in ticket ? ticket.createdByUserId : '',
@@ -438,6 +467,25 @@ function mapComprobante(comprobante: BackendComprobante): Comprobante {
     createdAt: comprobante.createdAt ?? undefined,
     updatedAt: comprobante.updatedAt ?? undefined,
     anulledAt: comprobante.anulledAt ?? undefined,
+  }
+}
+
+function mapInstitutionSettings(settings: BackendInstitutionSettings): InstitutionSettings {
+  return {
+    id: String(settings.id),
+    nombreCentroVecinal: settings.nombreCentroVecinal,
+    descripcionHome: settings.descripcionHome,
+    descripcionContacto: settings.descripcionContacto,
+    mostrarTelefono: settings.mostrarTelefono,
+    telefono: settings.telefono ?? undefined,
+    mostrarEmail: settings.mostrarEmail,
+    email: settings.email ?? undefined,
+    mostrarDireccion: settings.mostrarDireccion,
+    direccion: settings.direccion ?? undefined,
+    mostrarHorarioAtencion: settings.mostrarHorarioAtencion,
+    horarioAtencion: settings.horarioAtencion ?? undefined,
+    createdAt: settings.createdAt ?? undefined,
+    updatedAt: settings.updatedAt ?? undefined,
   }
 }
 
@@ -1144,46 +1192,6 @@ export async function createComprobante(
   return mapComprobante(comprobante)
 }
 
-export async function updateComprobante(
-  token: string,
-  comprobanteId: string,
-  payload: {
-    socioId?: string
-    tipo: TipoComprobanteDoc
-    origen: OrigenComprobante
-    fechaEmision: string
-    concepto: string
-    descripcion?: string
-    monto: number
-    medioPago?: string
-    nombrePagador?: string
-    dniPagador?: string
-    referenciaOrigenId?: string
-    observaciones?: string
-  }
-): Promise<Comprobante> {
-  const comprobante = await apiRequest<BackendComprobante>(`/api/comprobantes/${comprobanteId}`, {
-    method: 'PUT',
-    token,
-    body: {
-      socioId: payload.socioId ? Number(payload.socioId) : null,
-      tipoComprobante: mapTipoComprobanteToBackend(payload.tipo),
-      origen: mapOrigenComprobanteToBackend(payload.origen),
-      fechaEmision: payload.fechaEmision,
-      concepto: payload.concepto.trim(),
-      descripcion: payload.descripcion?.trim() || null,
-      monto: payload.monto,
-      medioPago: payload.medioPago?.trim() || null,
-      nombrePagador: payload.nombrePagador?.trim() || null,
-      dniPagador: payload.dniPagador?.trim() || null,
-      referenciaOrigenId: payload.referenciaOrigenId?.trim() || null,
-      observaciones: payload.observaciones?.trim() || null,
-    },
-  })
-
-  return mapComprobante(comprobante)
-}
-
 export async function anularComprobante(token: string, comprobanteId: string): Promise<Comprobante> {
   const comprobante = await apiRequest<BackendComprobante>(`/api/comprobantes/${comprobanteId}/anular`, {
     method: 'PATCH',
@@ -1285,6 +1293,53 @@ export async function resetAdminUserPassword(
     token,
     body: { password, temporary },
   })
+}
+
+export async function fetchPublicInstitutionSettings(): Promise<InstitutionSettings> {
+  const settings = await publicApiRequest<BackendInstitutionSettings>('/api/public/institucional')
+  return mapInstitutionSettings(settings)
+}
+
+export async function fetchAdminInstitutionSettings(token: string): Promise<InstitutionSettings> {
+  const settings = await apiRequest<BackendInstitutionSettings>('/api/admin/institucional', { token })
+  return mapInstitutionSettings(settings)
+}
+
+export async function updateAdminInstitutionSettings(
+  token: string,
+  payload: {
+    nombreCentroVecinal: string
+    descripcionHome: string
+    descripcionContacto: string
+    mostrarTelefono: boolean
+    telefono?: string
+    mostrarEmail: boolean
+    email?: string
+    mostrarDireccion: boolean
+    direccion?: string
+    mostrarHorarioAtencion: boolean
+    horarioAtencion?: string
+  }
+): Promise<InstitutionSettings> {
+  const settings = await apiRequest<BackendInstitutionSettings>('/api/admin/institucional', {
+    method: 'PUT',
+    token,
+    body: {
+      nombreCentroVecinal: payload.nombreCentroVecinal.trim(),
+      descripcionHome: payload.descripcionHome.trim(),
+      descripcionContacto: payload.descripcionContacto.trim(),
+      mostrarTelefono: payload.mostrarTelefono,
+      telefono: payload.telefono?.trim() || null,
+      mostrarEmail: payload.mostrarEmail,
+      email: payload.email?.trim() || null,
+      mostrarDireccion: payload.mostrarDireccion,
+      direccion: payload.direccion?.trim() || null,
+      mostrarHorarioAtencion: payload.mostrarHorarioAtencion,
+      horarioAtencion: payload.horarioAtencion?.trim() || null,
+    },
+  })
+
+  return mapInstitutionSettings(settings)
 }
 
 export async function fetchPublicNews(): Promise<NewsItem[]> {
